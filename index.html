@@ -2,296 +2,23 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<meta name="theme-color" content="#0a0a0f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Tennis Legends Simulator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg: #0a0a0f;
-    --surface: #111118;
-    --surface2: #1a1a24;
-    --border: #2a2a3a;
-    --accent: #c8f000;
-    --accent2: #00e5ff;
-    --red: #ff4444;
-    --text: #e8e8f0;
-    --muted: #6a6a8a;
-  }
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body { background:var(--bg); color:var(--text); font-family:'Barlow',sans-serif; min-height:100vh; overflow-x:hidden; }
-  body::before { content:''; position:fixed; inset:0; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E"); pointer-events:none; z-index:9999; opacity:0.4; }
-
-  /* HEADER */
-  header { padding:1.2rem 3rem; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; background:rgba(10,10,15,0.95); backdrop-filter:blur(10px); z-index:100; }
-  .logo { font-family:'Anton',sans-serif; font-size:1.8rem; letter-spacing:0.05em; color:var(--accent); }
-  .logo span { color:var(--text); }
-  .nav-tabs { display:flex; gap:0; }
-  .nav-tab { font-family:'Barlow Condensed',sans-serif; font-size:0.8rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--muted); border:1px solid var(--border); padding:0.5rem 1.2rem; cursor:pointer; transition:all 0.15s; background:transparent; }
-  .nav-tab:first-child { border-right:none; }
-  .nav-tab.active { background:var(--accent); color:var(--bg); border-color:var(--accent); font-weight:700; }
-  .nav-tab:hover:not(.active) { color:var(--text); border-color:var(--muted); }
-
-  /* PAGE SYSTEM */
-  .page { display:none; }
-  .page.active { display:block; }
-
-  /* SECTION LABEL */
-  .section-label { font-family:'Barlow Condensed',sans-serif; font-size:0.7rem; letter-spacing:0.3em; text-transform:uppercase; color:var(--accent); margin-bottom:1.5rem; display:flex; align-items:center; gap:0.8rem; }
-  .section-label::after { content:''; flex:1; height:1px; background:var(--border); }
-
-  /* ===================== SIMULATOR PAGE ===================== */
-  .main-grid { display:grid; grid-template-columns:1fr 1fr; gap:3rem; max-width:1400px; margin:0 auto; padding:3rem; }
-
-  .player-grid { display:grid; grid-template-columns:1fr 1fr; gap:0.6rem; max-height:520px; overflow-y:auto; padding-right:4px; }
-  .player-grid::-webkit-scrollbar { width:4px; }
-  .player-grid::-webkit-scrollbar-track { background:var(--surface); }
-  .player-grid::-webkit-scrollbar-thumb { background:var(--border); }
-
-  .player-card { background:var(--surface); border:1px solid var(--border); padding:0.9rem 1rem; cursor:pointer; transition:all 0.15s; position:relative; overflow:hidden; }
-  .player-card::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; background:transparent; transition:all 0.15s; }
-  .player-card:hover { border-color:var(--muted); background:var(--surface2); }
-  .player-card.selected-p1 { border-color:var(--accent); background:#1a1f00; }
-  .player-card.selected-p1::before { background:var(--accent); }
-  .player-card.selected-p2 { border-color:var(--accent2); background:#001a1f; }
-  .player-card.selected-p2::before { background:var(--accent2); }
-  .player-name { font-family:'Barlow Condensed',sans-serif; font-size:0.95rem; font-weight:700; letter-spacing:0.05em; text-transform:uppercase; }
-  .player-meta { font-size:0.7rem; color:var(--muted); margin-top:0.2rem; display:flex; gap:0.6rem; flex-wrap:wrap; }
-  .player-stat-mini { display:flex; gap:0.8rem; margin-top:0.4rem; flex-wrap:wrap; }
-  .stat-pill { font-size:0.65rem; font-family:'Barlow Condensed',sans-serif; letter-spacing:0.05em; }
-  .stat-pill span { color:var(--accent); font-weight:700; }
-
-  .config-panel { background:var(--surface); border:1px solid var(--border); padding:1.5rem; display:flex; flex-direction:column; gap:1rem; }
-  .config-row { display:flex; align-items:center; justify-content:space-between; font-family:'Barlow Condensed',sans-serif; font-size:0.9rem; letter-spacing:0.05em; text-transform:uppercase; color:var(--muted); }
-  .config-options { display:flex; gap:0.4rem; }
-  .opt-btn { background:var(--surface2); border:1px solid var(--border); color:var(--muted); padding:0.3rem 0.8rem; font-size:0.75rem; font-family:'Barlow Condensed',sans-serif; letter-spacing:0.05em; cursor:pointer; transition:all 0.1s; text-transform:uppercase; }
-  .opt-btn.active { background:var(--accent); color:var(--bg); border-color:var(--accent); font-weight:700; }
-
-  .sim-btn { background:var(--accent); color:var(--bg); border:none; padding:1.2rem 2rem; font-family:'Anton',sans-serif; font-size:1.4rem; letter-spacing:0.1em; text-transform:uppercase; cursor:pointer; width:100%; transition:all 0.15s; }
-  .sim-btn:hover { background:#d4ff10; transform:translateY(-1px); box-shadow:0 8px 30px rgba(200,240,0,0.3); }
-  .sim-btn:disabled { background:var(--border); color:var(--muted); cursor:not-allowed; transform:none; box-shadow:none; }
-
-  #scoreboard { display:none; grid-column:1/-1; background:var(--surface); border:1px solid var(--border); }
-  .score-header { display:grid; grid-template-columns:2fr repeat(5,1fr) 1fr; background:var(--surface2); border-bottom:1px solid var(--border); padding:0.8rem 1.5rem; font-family:'Barlow Condensed',sans-serif; font-size:0.75rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--muted); }
-  .score-header div,.score-row div { text-align:center; }
-  .score-header div:first-child,.score-row div:first-child { text-align:left; }
-  .score-row { display:grid; grid-template-columns:2fr repeat(5,1fr) 1fr; padding:1.2rem 1.5rem; border-bottom:1px solid var(--border); align-items:center; }
-  .score-row:last-child { border-bottom:none; }
-  .player-label { font-family:'Barlow Condensed',sans-serif; font-size:1.1rem; font-weight:700; letter-spacing:0.05em; text-transform:uppercase; display:flex; align-items:center; gap:0.6rem; }
-  .dot-p1 { width:8px; height:8px; background:var(--accent); border-radius:50%; flex-shrink:0; }
-  .dot-p2 { width:8px; height:8px; background:var(--accent2); border-radius:50%; flex-shrink:0; }
-  .set-score { font-family:'Anton',sans-serif; font-size:1.4rem; text-align:center; }
-  .set-score.winner { color:var(--accent); }
-  .set-score.inactive { color:var(--border); }
-  .set-score.p2-win { color:var(--accent2); }
-  .games-total { font-family:'Anton',sans-serif; font-size:1.8rem; }
-  .games-total.p1 { color:var(--accent); }
-  .games-total.p2 { color:var(--accent2); }
-
-  #match-stats { display:none; grid-column:1/-1; background:var(--surface); border:1px solid var(--border); padding:2rem; }
-  .stats-grid { display:grid; grid-template-columns:1fr 200px 1fr; gap:0.8rem; align-items:center; }
-  .stat-val-left { text-align:right; font-family:'Barlow Condensed',sans-serif; font-size:1.1rem; font-weight:700; color:var(--accent); }
-  .stat-val-right { text-align:left; font-family:'Barlow Condensed',sans-serif; font-size:1.1rem; font-weight:700; color:var(--accent2); }
-  .stat-name { text-align:center; font-size:0.72rem; font-family:'Barlow Condensed',sans-serif; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); padding:0.3rem 0; }
-  .bar-wrap { height:3px; background:var(--border); overflow:hidden; }
-  .bar-fill-left { height:100%; background:var(--accent); float:right; transition:width 1s ease; }
-  .bar-fill-right { height:100%; background:var(--accent2); transition:width 1s ease; }
-
-  .winner-banner { display:none; grid-column:1/-1; padding:3rem; text-align:center; background:linear-gradient(135deg,#0a1000,#0a0a0f,#001015); border:1px solid var(--border); position:relative; overflow:hidden; }
-  .winner-banner::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse at center,rgba(200,240,0,0.05) 0%,transparent 70%); }
-  .winner-label { font-family:'Barlow Condensed',sans-serif; font-size:0.75rem; letter-spacing:0.4em; text-transform:uppercase; color:var(--muted); margin-bottom:0.5rem; }
-  .winner-name { font-family:'Anton',sans-serif; font-size:4rem; letter-spacing:0.05em; text-transform:uppercase; line-height:1; margin-bottom:0.5rem; }
-  .winner-score { font-family:'Barlow Condensed',sans-serif; font-size:1.2rem; color:var(--muted); letter-spacing:0.1em; }
-
-  #point-log { display:none; grid-column:1/-1; max-height:180px; overflow-y:auto; background:var(--surface); border:1px solid var(--border); padding:1rem 1.5rem; }
-  #point-log::-webkit-scrollbar { width:4px; }
-  #point-log::-webkit-scrollbar-thumb { background:var(--border); }
-  .log-entry { font-size:0.78rem; color:var(--muted); padding:0.15rem 0; font-family:'Barlow Condensed',sans-serif; border-bottom:1px solid #1a1a24; }
-  .log-entry.important { color:var(--accent); font-weight:700; }
-  .log-entry.p2w { color:var(--accent2); font-weight:700; }
-
-  .again-btn { background:transparent; border:1px solid var(--border); color:var(--muted); padding:0.8rem 1.5rem; font-family:'Barlow Condensed',sans-serif; letter-spacing:0.1em; font-size:0.85rem; text-transform:uppercase; cursor:pointer; transition:all 0.15s; width:100%; }
-  .again-btn:hover { border-color:var(--accent); color:var(--accent); }
-
-  .selection-display { display:flex; align-items:center; gap:1rem; padding:1rem 1.5rem; background:var(--surface2); border:1px solid var(--border); margin-bottom:1.5rem; }
-  .sel-name { font-family:'Barlow Condensed',sans-serif; font-size:1rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; flex:1; }
-  .sel-name.p1 { color:var(--accent); }
-  .sel-name.p2 { color:var(--accent2); }
-  .sel-vs { font-family:'Anton',sans-serif; font-size:0.85rem; color:var(--muted); letter-spacing:0.2em; }
-
-  @keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
-  .animate-in { animation:fadeIn 0.4s ease forwards; }
-
-  /* SEARCH BAR for simulator */
-  .search-bar { width:100%; background:var(--surface2); border:1px solid var(--border); color:var(--text); padding:0.7rem 1rem; font-family:'Barlow Condensed',sans-serif; font-size:0.9rem; letter-spacing:0.05em; margin-bottom:0.8rem; outline:none; }
-  .search-bar::placeholder { color:var(--muted); }
-  .search-bar:focus { border-color:var(--muted); }
-
-  /* ===================== STATS PAGE ===================== */
-  #page-stats { background:var(--bg); }
-  .stats-page-layout { display:grid; grid-template-columns:320px 1fr; min-height:calc(100vh - 65px); }
-
-  /* LEFT PANEL */
-  .players-sidebar { background:var(--surface); border-right:1px solid var(--border); height:calc(100vh - 65px); overflow-y:auto; position:sticky; top:65px; }
-  .players-sidebar::-webkit-scrollbar { width:4px; }
-  .players-sidebar::-webkit-scrollbar-thumb { background:var(--border); }
-  .sidebar-header { padding:1.2rem 1.5rem; border-bottom:1px solid var(--border); position:sticky; top:0; background:var(--surface); z-index:10; }
-  .sidebar-title { font-family:'Barlow Condensed',sans-serif; font-size:0.7rem; letter-spacing:0.3em; text-transform:uppercase; color:var(--accent); margin-bottom:0.8rem; }
-  .sidebar-search { width:100%; background:var(--bg); border:1px solid var(--border); color:var(--text); padding:0.6rem 0.9rem; font-family:'Barlow Condensed',sans-serif; font-size:0.85rem; letter-spacing:0.03em; outline:none; }
-  .sidebar-search::placeholder { color:var(--muted); }
-  .sidebar-search:focus { border-color:var(--muted); }
-
-  .era-filter { display:flex; flex-wrap:wrap; gap:0.3rem; margin-top:0.6rem; }
-  .era-btn { font-family:'Barlow Condensed',sans-serif; font-size:0.65rem; letter-spacing:0.1em; text-transform:uppercase; border:1px solid var(--border); color:var(--muted); padding:0.2rem 0.5rem; cursor:pointer; background:transparent; transition:all 0.1s; }
-  .era-btn.active { background:var(--accent); color:var(--bg); border-color:var(--accent); font-weight:700; }
-
-  .player-list-item { padding:0.8rem 1.5rem; cursor:pointer; border-bottom:1px solid #16161e; transition:all 0.1s; display:flex; align-items:center; gap:0.7rem; position:relative; }
-  .player-list-item::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; background:transparent; transition:all 0.1s; }
-  .player-list-item:hover { background:var(--surface2); }
-  .player-list-item.active { background:#1a1f00; }
-  .player-list-item.active::before { background:var(--accent); }
-  .pli-flag { font-size:1rem; flex-shrink:0; }
-  .pli-info { flex:1; min-width:0; }
-  .pli-name { font-family:'Barlow Condensed',sans-serif; font-size:0.9rem; font-weight:700; letter-spacing:0.05em; text-transform:uppercase; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .pli-sub { font-size:0.68rem; color:var(--muted); margin-top:0.1rem; }
-  .pli-gs { font-family:'Anton',sans-serif; font-size:1rem; color:var(--accent); flex-shrink:0; }
-
-  /* RIGHT PANEL - player detail */
-  .player-detail { padding:3rem; }
-  .detail-empty { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:60vh; color:var(--muted); text-align:center; }
-  .detail-empty-icon { font-size:4rem; margin-bottom:1rem; opacity:0.3; }
-  .detail-empty-text { font-family:'Barlow Condensed',sans-serif; font-size:1rem; letter-spacing:0.2em; text-transform:uppercase; }
-
-  .player-hero { display:grid; grid-template-columns:1fr 2fr; gap:3rem; margin-bottom:3rem; align-items:start; }
-  .player-avatar { background:var(--surface2); border:1px solid var(--border); aspect-ratio:3/4; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; }
-  .player-avatar-initial { font-family:'Anton',sans-serif; font-size:6rem; color:var(--border); letter-spacing:0.05em; }
-  .player-flag-bg { position:absolute; bottom:1rem; right:1rem; font-size:2.5rem; opacity:0.3; }
-  .player-avatar-accent { position:absolute; bottom:0; left:0; right:0; height:4px; background:var(--accent); }
-
-  .player-hero-info {}
-  .player-hero-name { font-family:'Anton',sans-serif; font-size:3rem; letter-spacing:0.03em; text-transform:uppercase; line-height:1; margin-bottom:0.4rem; }
-  .player-hero-country { font-family:'Barlow Condensed',sans-serif; font-size:0.8rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--muted); margin-bottom:1.5rem; display:flex; align-items:center; gap:0.5rem; }
-  .player-hero-badges { display:flex; flex-wrap:wrap; gap:0.5rem; margin-bottom:1.5rem; }
-  .badge { font-family:'Barlow Condensed',sans-serif; font-size:0.72rem; letter-spacing:0.1em; text-transform:uppercase; padding:0.3rem 0.7rem; border:1px solid var(--border); color:var(--muted); }
-  .badge.highlight { border-color:var(--accent); color:var(--accent); }
-  .badge.gs { background:var(--accent); color:var(--bg); border-color:var(--accent); font-weight:700; }
-
-  .player-bio { font-size:0.9rem; line-height:1.7; color:#a0a0b8; margin-bottom:1.5rem; max-width:500px; }
-  .peak-stat { display:flex; gap:2rem; flex-wrap:wrap; }
-  .peak-item { }
-  .peak-label { font-family:'Barlow Condensed',sans-serif; font-size:0.65rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--muted); margin-bottom:0.2rem; }
-  .peak-value { font-family:'Anton',sans-serif; font-size:1.4rem; color:var(--accent); }
-
-  /* SIM STATS TABLE */
-  .sim-stats-section { margin-bottom:3rem; }
-  .stat-cards { display:grid; grid-template-columns:repeat(4, 1fr); gap:1rem; margin-bottom:2rem; }
-  .stat-card { background:var(--surface); border:1px solid var(--border); padding:1.2rem; position:relative; overflow:hidden; }
-  .stat-card::after { content:''; position:absolute; bottom:0; left:0; right:0; height:2px; background:var(--border); }
-  .stat-card.highlight::after { background:var(--accent); }
-  .stat-card-label { font-family:'Barlow Condensed',sans-serif; font-size:0.65rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--muted); margin-bottom:0.5rem; }
-  .stat-card-value { font-family:'Anton',sans-serif; font-size:2.2rem; line-height:1; }
-  .stat-card-sub { font-size:0.72rem; color:var(--muted); margin-top:0.3rem; }
-
-  /* SURFACE BARS */
-  .surface-section { background:var(--surface); border:1px solid var(--border); padding:1.5rem; margin-bottom:2rem; }
-  .surface-title { font-family:'Barlow Condensed',sans-serif; font-size:0.7rem; letter-spacing:0.25em; text-transform:uppercase; color:var(--accent); margin-bottom:1.2rem; }
-  .surface-row { display:grid; grid-template-columns:80px 1fr 60px; align-items:center; gap:1rem; margin-bottom:0.8rem; }
-  .surface-label { font-family:'Barlow Condensed',sans-serif; font-size:0.8rem; letter-spacing:0.05em; text-transform:uppercase; color:var(--muted); }
-  .surface-bar-track { height:6px; background:var(--border); position:relative; }
-  .surface-bar-fill { height:100%; transition:width 0.8s ease; }
-  .surface-bar-fill.hard { background:#4fc3f7; }
-  .surface-bar-fill.clay { background:#ff8a65; }
-  .surface-bar-fill.grass { background:#81c784; }
-  .surface-val { font-family:'Barlow Condensed',sans-serif; font-size:0.85rem; font-weight:700; text-align:right; }
-  .surface-val.good { color:var(--accent); }
-  .surface-val.avg { color:var(--text); }
-  .surface-val.weak { color:var(--muted); }
-
-  /* COMPARISON BARS */
-  .stat-table { background:var(--surface); border:1px solid var(--border); }
-  .stat-table-header { display:grid; grid-template-columns:1fr 100px 160px; padding:0.8rem 1.5rem; background:var(--surface2); border-bottom:1px solid var(--border); font-family:'Barlow Condensed',sans-serif; font-size:0.65rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--muted); }
-  .stat-table-row { display:grid; grid-template-columns:1fr 100px 160px; padding:0.8rem 1.5rem; border-bottom:1px solid #16161e; align-items:center; }
-  .stat-table-row:last-child { border-bottom:none; }
-  .str-label { font-size:0.8rem; color:var(--muted); font-family:'Barlow Condensed',sans-serif; letter-spacing:0.05em; text-transform:uppercase; }
-  .str-value { font-family:'Barlow Condensed',sans-serif; font-size:1rem; font-weight:700; color:var(--text); }
-  .str-bar { height:4px; background:var(--border); }
-  .str-bar-fill { height:100%; background:var(--accent); transition:width 0.8s; }
-
-
-  /* SPEED CARDS */
-  .speed-cards { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-bottom:0.5rem; }
-  .speed-cards .speed-card:last-child { grid-column: 1 / -1; }
-  .speed-card { background:var(--surface2); border:1px solid var(--border); padding:1.2rem; text-align:center; position:relative; }
-  .speed-card.combo { background:linear-gradient(135deg,#0a1000,#001015); border-color:var(--accent); }
-  .speed-icon { font-size:1.5rem; margin-bottom:0.4rem; }
-  .speed-label { font-family:'Barlow Condensed',sans-serif; font-size:0.65rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--muted); margin-bottom:0.3rem; }
-  .speed-value { font-family:'Anton',sans-serif; font-size:2.5rem; line-height:1; }
-  .speed-unit { font-size:0.7rem; color:var(--muted); margin-bottom:0.6rem; }
-  .speed-bar-track { height:3px; background:var(--border); }
-  .speed-bar { height:100%; max-width:100%; }
-
-
-  /* DATA BADGE */
-  .data-badge { display:inline-block; font-size:0.6rem; letter-spacing:0.1em; padding:0.2rem 0.5rem; margin-left:0.8rem; font-weight:700; vertical-align:middle; }
-  .badge-real { background:rgba(200,240,0,0.15); color:var(--accent); border:1px solid var(--accent); }
-  .badge-est  { background:rgba(255,152,0,0.15); color:#ff9800; border:1px solid #ff9800; }
-
-  /* RALLY DISTRIBUTION */
-  .rally-distribution { display:flex; flex-direction:column; gap:0.8rem; margin-bottom:1.2rem; }
-  .rally-bar-row { display:grid; grid-template-columns:100px 1fr 1fr; gap:0.8rem; align-items:center; }
-  .rally-bar-label { font-family:'Barlow Condensed',sans-serif; font-size:0.75rem; letter-spacing:0.05em; text-transform:uppercase; color:var(--text); }
-  .rally-bar-outer { height:22px; background:var(--border); position:relative; max-width:100%; }
-  .rally-bar-fill { height:100%; position:relative; display:flex; align-items:center; min-width:30px; transition:width 0.8s ease; }
-  .rally-short { background:linear-gradient(90deg, #c8f000, #a0c000); }
-  .rally-mid   { background:linear-gradient(90deg, #00e5ff, #0099aa); }
-  .rally-long  { background:linear-gradient(90deg, #ff9800, #cc6600); }
-  .rally-pct { font-family:'Anton',sans-serif; font-size:0.75rem; color:var(--bg); padding:0 0.4rem; white-space:nowrap; }
-  .rally-desc { font-size:0.68rem; color:var(--muted); line-height:1.3; }
-
-  /* RETURN SPEED */
-  .return-speed-row { display:grid; grid-template-columns:180px 80px 1fr; align-items:center; gap:0.8rem; margin-top:0.5rem; padding-top:0.8rem; border-top:1px solid var(--border); }
-  .return-speed-label { font-family:'Barlow Condensed',sans-serif; font-size:0.75rem; letter-spacing:0.05em; text-transform:uppercase; color:var(--muted); }
-  .return-speed-val { font-family:'Anton',sans-serif; font-size:1.2rem; color:var(--accent2); }
-  .return-speed-bar-track { height:4px; background:var(--border); }
-  .return-speed-bar { height:100%; background:var(--accent2); max-width:100%; transition:width 0.8s ease; }
-
-
-  /* GS TROPHY SECTION */
-  .gs-trophy-section { margin-bottom:1.5rem; }
-  .gs-trophy-row { display:grid; grid-template-columns:repeat(4,1fr); gap:0.8rem; margin-bottom:0.8rem; }
-  .gs-trophy-item { background:var(--surface2); border:1px solid var(--border); padding:0.8rem; text-align:center; position:relative; }
-  .gs-trophy-item.gs-won { border-color:rgba(200,240,0,0.4); background:rgba(200,240,0,0.05); }
-  .gs-trophy-item.gs-zero { opacity:0.45; }
-  .gs-icon { font-size:1.4rem; margin-bottom:0.2rem; }
-  .gs-name { font-family:'Barlow Condensed',sans-serif; font-size:0.62rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin-bottom:0.3rem; }
-  .gs-count { font-family:'Anton',sans-serif; font-size:2rem; line-height:1; color:var(--accent); }
-  .gs-dots { font-size:0.55rem; color:var(--accent); letter-spacing:1px; margin-top:0.3rem; line-height:1.4; word-break:break-all; }
-  .gs-dots-empty { font-size:0.7rem; color:var(--border); margin-top:0.3rem; }
-  .gs-totals-row { display:flex; gap:2rem; padding:0.8rem 1rem; background:var(--surface2); border:1px solid var(--border); }
-  .gs-total-item { display:flex; align-items:center; gap:0.8rem; }
-  .gs-total-label { font-family:'Barlow Condensed',sans-serif; font-size:0.75rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); }
-  .gs-total-val { font-family:'Anton',sans-serif; font-size:1.8rem; color:var(--accent); }
-  .masters-val { color:var(--accent2) !important; }
-
-  /* SIDEBAR TITLES */
-  .pli-titles { display:flex; flex-direction:column; gap:0.15rem; align-items:flex-end; flex-shrink:0; }
-  .pli-gs { font-family:'Barlow Condensed',sans-serif; font-size:0.72rem; font-weight:700; color:var(--accent); white-space:nowrap; }
-  .pli-masters { font-family:'Barlow Condensed',sans-serif; font-size:0.68rem; color:var(--accent2); white-space:nowrap; }
-
-  @media (max-width: 900px) {
-    .stats-page-layout { grid-template-columns:1fr; }
-    .players-sidebar { height:auto; position:relative; top:0; max-height:300px; }
-    .player-hero { grid-template-columns:1fr; }
-    .stat-cards { grid-template-columns:repeat(2,1fr); }
-  }
-</style>
+<link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-
 <header>
   <div class="logo">Tennis <span>Legends</span></div>
   <div class="nav-tabs">
-    <button class="nav-tab active" onclick="showPage('simulator')">⚡ Simulador</button>
-    <button class="nav-tab" onclick="showPage('stats')">📊 Estadísticas</button>
+    <button class="nav-tab active" data-page="simulator">⚡ Simulador</button>
+    <button class="nav-tab" data-page="stats">📊 Estadísticas</button>
+    <button class="nav-tab" data-page="comparador">🔄 Comparador</button>
+    <button class="nav-tab" data-page="historico">🔥 Histórico</button>
   </div>
 </header>
 
@@ -301,13 +28,13 @@
 
   <div>
     <div class="section-label">Jugador 1</div>
-    <input class="search-bar" placeholder="Buscar jugador..." oninput="filterGrid('p1', this.value)" id="search-p1">
+    <input class="search-bar" placeholder="Buscar jugador..." id="search-p1">
     <div class="player-grid" id="grid-p1"></div>
   </div>
 
   <div>
     <div class="section-label">Jugador 2</div>
-    <input class="search-bar" placeholder="Buscar jugador..." oninput="filterGrid('p2', this.value)" id="search-p2">
+    <input class="search-bar" placeholder="Buscar jugador..." id="search-p2">
     <div class="player-grid" id="grid-p2"></div>
   </div>
 
@@ -346,13 +73,13 @@
     <button class="sim-btn" id="sim-btn" disabled>SIMULAR PARTIDO</button>
   </div>
 
-  <div class="winner-banner" id="winner-banner">
+  <div class="winner-banner" id="winner-banner" style="display:none">
     <div class="winner-label">🏆 Ganador del partido</div>
     <div class="winner-name" id="winner-name">—</div>
     <div class="winner-score" id="winner-score">—</div>
   </div>
 
-  <div id="scoreboard">
+  <div id="scoreboard" style="display:none">
     <div class="score-header">
       <div>Jugador</div>
       <div>S1</div><div>S2</div><div>S3</div><div>S4</div><div>S5</div>
@@ -378,19 +105,67 @@
     </div>
   </div>
 
-  <div id="match-stats">
+  <div id="match-stats" style="display:none">
     <div class="section-label">Estadísticas del partido</div>
-    <div class="stats-grid" id="stats-grid"></div>
+    <div class="stats-two-cols" id="stats-grid">
+      <div class="stats-col" id="stats-col-p1"></div>
+      <div class="stats-col" id="stats-col-p2"></div>
+    </div>
   </div>
-  <div id="point-log"></div>
+  <div id="point-log" style="display:none"></div>
   <div id="again-wrap" style="display:none; grid-column:1/-1;">
-    <button class="again-btn" onclick="resetSim()">↩ Nuevo partido</button>
+    <div id="sim1000-result" style="display:none;">
+      <div class="sim1000-header">100 PARTIDOS</div>
+      <div class="sim1000-nums">
+        <div class="sim1000-num p1" id="sim1000-num-p1">—</div>
+        <div class="sim1000-num p2" id="sim1000-num-p2">—</div>
+      </div>
+      <div class="sim1000-bar-wrap">
+        <div class="sim1000-bar-p1" id="sim1000-bar-p1"></div>
+        <div class="sim1000-bar-p2" id="sim1000-bar-p2"></div>
+      </div>
+    </div>
+    <button class="sim-btn sim-btn-1000" id="sim-btn-1000" disabled>× 100</button>
+    <button class="again-btn" id="again-btn">↩ Nuevo partido</button>
   </div>
 
 </div>
 </div>
 
-<!-- ==================== PAGE: STATS ==================== -->
+<!-- ==================== PAGE: COMPARADOR ==================== -->
+<div id="page-comparador" class="page">
+  <div class="stats-page-layout">
+
+    <!-- SIDEBAR -->
+    <div class="players-sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-title">Base de datos · <span id="comp-player-count">0</span> jugadores</div>
+        <input class="sidebar-search" placeholder="Buscar nombre..." id="comp-sidebar-search">
+        <div class="era-filter" id="comp-era-filter">
+          <button class="era-btn active" data-era="all">Todos</button>
+          <button class="era-btn" data-era="2010s">2010s+</button>
+          <button class="era-btn" data-era="2000s">2000s</button>
+          <button class="era-btn" data-era="90s">90s</button>
+          <button class="era-btn" data-era="80s">80s</button>
+          <button class="era-btn" data-era="70s">70s</button>
+        </div>
+      </div>
+      <div id="comp-players-list"></div>
+    </div>
+
+    <!-- DETAIL VIEW: dos columnas de jugadores -->
+    <div class="player-detail" id="comp-player-detail">
+      <div class="detail-empty" id="comp-empty-view">
+        <div class="detail-empty-icon">🔄</div>
+        <div class="detail-empty-text">Selecciona dos jugadores para compararlos</div>
+      </div>
+      <div id="comp-detail-content" style="display:none;"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ==================== PAGE: ESTADÍSTICAS ==================== -->
 <div id="page-stats" class="page">
   <div class="stats-page-layout">
 
@@ -398,7 +173,7 @@
     <div class="players-sidebar">
       <div class="sidebar-header">
         <div class="sidebar-title">Base de datos · <span id="player-count">0</span> jugadores</div>
-        <input class="sidebar-search" placeholder="Buscar nombre..." oninput="filterSidebar(this.value)" id="sidebar-search">
+        <input class="sidebar-search" placeholder="Buscar nombre..." id="sidebar-search">
         <div class="era-filter" id="era-filter">
           <button class="era-btn active" data-era="all">Todos</button>
           <button class="era-btn" data-era="2010s">2010s+</button>
@@ -423,1116 +198,120 @@
   </div>
 </div>
 
+<!-- ==================== PAGE: HISTÓRICO ==================== -->
+<div id="page-historico" class="page">
+  <div class="results-header">
+    <h2>RESULTADOS HISTÓRICOS</h2>
+    <p class="results-subtitle">9.489 partidos reales · 1985–2024 · 99 jugadores</p>
+  </div>
+
+  <!-- FILTROS -->
+  <div class="results-filters">
+    <div class="filter-group">
+      <label>JUGADOR 1</label>
+      <select id="rf-p1"><option value="">Todos</option></select>
+    </div>
+    <div class="filter-group">
+      <label>JUGADOR 2</label>
+      <select id="rf-p2"><option value="">Todos</option></select>
+    </div>
+    <div class="filter-group">
+      <label>SUPERFICIE</label>
+      <select id="rf-surf">
+        <option value="">Todas</option>
+        <option value="H">Dura</option>
+        <option value="C">Tierra</option>
+        <option value="G">Hierba</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>NIVEL</label>
+      <select id="rf-lvl">
+        <option value="">Todos</option>
+        <option value="Grand Slam">Grand Slam</option>
+        <option value="Masters 1000">Masters 1000</option>
+        <option value="ATP Finals">ATP Finals</option>
+        <option value="ATP 500">ATP 500</option>
+        <option value="ATP 250">ATP 250</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>AÑO DESDE</label>
+      <select id="rf-year-from"><option value="">1985</option></select>
+    </div>
+    <div class="filter-group">
+      <label>AÑO HASTA</label>
+      <select id="rf-year-to"><option value="">2024</option></select>
+    </div>
+    <button class="btn-filter" onclick="applyResultsFilter()">FILTRAR</button>
+    <button class="btn-filter btn-reset" onclick="resetResultsFilter()">RESET</button>
+  </div>
+
+  <!-- H2H BADGE -->
+  <div id="h2h-badge" style="display:none;"></div>
+
+  <!-- CONTADOR -->
+  <div id="results-count" class="results-count"></div>
+
+  <!-- TABLA -->
+  <div class="results-table-wrap">
+    <table class="results-table">
+      <thead>
+        <tr>
+          <th>AÑO</th>
+          <th>TORNEO</th>
+          <th>NIVEL</th>
+          <th>RONDA</th>
+          <th>SUPERFICIE</th>
+          <th>GANADOR</th>
+          <th>PERDEDOR</th>
+          <th>RESULTADO</th>
+        </tr>
+      </thead>
+      <tbody id="results-tbody"></tbody>
+    </table>
+  </div>
+
+  <!-- PAGINACIÓN -->
+  <div id="results-pagination" class="results-pagination"></div>
+</div>
+
+<script src="js/players.js" defer></script>
+<script src="js/engine.js" defer></script>
+<script src="js/results_db.js" defer></script>
+<script src="js/app.js" defer></script>
+
+<!-- Ensure initialization happens after all scripts load -->
 <script>
-// COMPLETE PLAYERS DATABASE - ~100 players
-const PLAYERS = [
-  // === BIG 3 & NEXT GEN ===
-  { id:'federer', name:'Roger Federer', country:'SUI', countryFlag:'🇨🇭', era:'2000-2022', style:'All-court', prime:'2004-2007', gs:20,gs_ro:1,gs_wi:8,gs_us:5,gs_au:6,masters:28, peak:'No.1 (2004)',
-    bio:'El jugador más elegante de la historia. 20 Grand Slams, 310 semanas como Nº1. Backhand de una mano icónico.',
-    tb_win:0.68,dec_win:0.65,net_win:0.72,height:185,
-    stats:{ serve1pct:0.63,win1st:0.79,win2nd:0.58,returnWin:0.38,winners:42,errors:22,breakConvert:0.44,breakSave:0.68,serve_kmh:230,fh_kmh:155,bh_kmh:140,surface:{hard:1.05,clay:0.92,grass:1.10},
-      rally_short:42,rally_mid:35,rally_long:23,rest_kmh:155,data_type:'real'}},
-  { id:'nadal', name:'Rafael Nadal', country:'ESP', countryFlag:'🇪🇸', era:'2003-2024', style:'Baseliner', prime:'2008-2012', gs:22,gs_ro:14,gs_wi:2,gs_us:4,gs_au:2,masters:36, peak:'No.1 (2008)',
-    bio:'El Rey de la Tierra. 22 Grand Slams, 14 Roland Garros. El revés con dos manos más letal de la historia.',
-    tb_win:0.62,dec_win:0.7,net_win:0.68,height:185,
-    stats:{ serve1pct:0.62,win1st:0.74,win2nd:0.56,returnWin:0.48,winners:33,errors:24,breakConvert:0.52,breakSave:0.65,serve_kmh:220,fh_kmh:160,bh_kmh:145,surface:{hard:0.98,clay:1.18,grass:0.96},
-      rally_short:34,rally_mid:33,rally_long:33,rest_kmh:158,data_type:'real'}},
-  { id:'djokovic', name:'Novak Djokovic', country:'SRB', countryFlag:'🇷🇸', era:'2004-present', style:'Baseliner', prime:'2011-2016', gs:24,gs_ro:3,gs_wi:7,gs_us:3,gs_au:11,masters:40, peak:'No.1 (2011)',
-    bio:'El mejor de todos los tiempos en términos de títulos. Defensa y devolución extraordinarias. Récord de 24 Grand Slams.',
-    tb_win:0.72,dec_win:0.74,net_win:0.66,height:188,
-    stats:{ serve1pct:0.64,win1st:0.76,win2nd:0.57,returnWin:0.50,winners:36,errors:19,breakConvert:0.50,breakSave:0.70,serve_kmh:235,fh_kmh:155,bh_kmh:150,surface:{hard:1.08,clay:1.05,grass:1.04},
-      rally_short:38,rally_mid:34,rally_long:28,rest_kmh:165,data_type:'real'}},
-  { id:'alcaraz', name:'Carlos Alcaraz', country:'ESP', countryFlag:'🇪🇸', era:'2021-present', style:'All-court', prime:'2023-present', gs:7,gs_ro:2,gs_wi:2,gs_us:2,gs_au:1,masters:13, peak:'No.1 (2022)',
-    bio:'La próxima superestrella. Velocidad explosiva, dropshot devastador, potencia sin límites. Ya ganó Roland Garros y Wimbledon con 21 años.',
-    tb_win:0.65,dec_win:0.68,net_win:0.72,height:183,
-    stats:{ serve1pct:0.64,win1st:0.78,win2nd:0.57,returnWin:0.47,winners:47,errors:26,breakConvert:0.51,breakSave:0.67,serve_kmh:230,fh_kmh:165,bh_kmh:150,surface:{hard:1.06,clay:1.10,grass:1.08},
-      rally_short:40,rally_mid:34,rally_long:26,rest_kmh:162,data_type:'real'}},
-  { id:'sinner', name:'Jannik Sinner', country:'ITA', countryFlag:'🇮🇹', era:'2018-present', style:'Baseliner', prime:'2024-present', gs:2,gs_ro:0,gs_wi:0,gs_us:1,gs_au:1,masters:8, peak:'No.1 (2024)',
-    bio:'Técnica limpia, golpes planos y profundos. Dominó el ranking en 2024 con dos Grand Slams. El devolución más consistente de su generación.',
-    tb_win:0.66,dec_win:0.68,net_win:0.64,height:188,
-    stats:{ serve1pct:0.63,win1st:0.76,win2nd:0.56,returnWin:0.49,winners:38,errors:20,breakConvert:0.49,breakSave:0.68,serve_kmh:225,fh_kmh:160,bh_kmh:155,surface:{hard:1.09,clay:1.02,grass:1.00},
-      rally_short:39,rally_mid:35,rally_long:26,rest_kmh:160,data_type:'real'}},
-  { id:'medvedev', name:'Daniil Medvedev', country:'RUS', countryFlag:'🇷🇺', era:'2015-present', style:'Baseliner', prime:'2021-present', gs:1,gs_ro:0,gs_wi:0,gs_us:1,gs_au:0,masters:6, peak:'No.1 (2022)',
-    bio:'Estilo anticonvencional y efectivo. Servicio potente, gran defensa. US Open 2021.',
-    tb_win:0.64,dec_win:0.65,net_win:0.58,height:198,
-    stats:{ serve1pct:0.63,win1st:0.77,win2nd:0.56,returnWin:0.46,winners:34,errors:22,breakConvert:0.43,breakSave:0.66,serve_kmh:220,fh_kmh:145,bh_kmh:148,surface:{hard:1.08,clay:0.91,grass:1.00},
-      rally_short:37,rally_mid:35,rally_long:28,rest_kmh:158,data_type:'real'}},
-  { id:'zverev', name:'Alexander Zverev', country:'GER', countryFlag:'🇩🇪', era:'2015-present', style:'All-court', prime:'2021-present', gs:0,gs_ro:0,gs_wi:0,gs_us:0,gs_au:0,masters:11, peak:'No.1 (2021)',
-    bio:'Servicio devastador, poderoso desde el fondo. Tiene que ganar aún su primer Grand Slam pero dominó el circuito varios años.',
-    tb_win:0.63,dec_win:0.64,net_win:0.64,height:198,
-    stats:{ serve1pct:0.64,win1st:0.79,win2nd:0.56,returnWin:0.43,winners:40,errors:26,breakConvert:0.45,breakSave:0.64,serve_kmh:235,fh_kmh:155,bh_kmh:148,surface:{hard:1.04,clay:1.03,grass:0.98},
-      rally_short:41,rally_mid:34,rally_long:25,rest_kmh:155,data_type:'real'}},
-  { id:'tsitsipas', name:'Stefanos Tsitsipas', country:'GRE', countryFlag:'🇬🇷', era:'2016-present', style:'All-court', prime:'2021-present', gs:0,gs_ro:0,gs_wi:0,gs_us:0,gs_au:0,masters:10, peak:'No.3 (2021)',
-    bio:'Juego ofensivo con bola alta, subida a la red frecuente. Backhand de una mano elegante. Finalista Roland Garros 2021.',
-    tb_win:0.62,dec_win:0.63,net_win:0.7,height:193,
-    stats:{ serve1pct:0.62,win1st:0.76,win2nd:0.55,returnWin:0.44,winners:41,errors:28,breakConvert:0.46,breakSave:0.63,serve_kmh:215,fh_kmh:155,bh_kmh:130,surface:{hard:1.01,clay:1.07,grass:0.97},
-      rally_short:40,rally_mid:34,rally_long:26,rest_kmh:152,data_type:'real'}},
-
-  // === AÑOS 90-2000 ===
-  { id:'sampras', name:'Pete Sampras', country:'USA', countryFlag:'🇺🇸', era:'1988-2002', style:'Serve & Volley', prime:'1993-1998', gs:11,gs_ro:0,gs_wi:7,gs_us:2,gs_au:2,masters:11, peak:'No.1 (1993)',
-    bio:'El mejor servidor de su época. 14 Grand Slams, 7 años terminando Nº1. Invencible en hierba.',
-    tb_win:0.7,dec_win:0.67,net_win:0.78,height:185,
-    stats:{ serve1pct:0.64,win1st:0.83,win2nd:0.60,returnWin:0.34,winners:48,errors:28,breakConvert:0.36,breakSave:0.72,serve_kmh:240,fh_kmh:160,bh_kmh:130,surface:{hard:1.06,clay:0.85,grass:1.14},
-      rally_short:50,rally_mid:30,rally_long:20,rest_kmh:140,data_type:'estimated'}},
-  { id:'agassi', name:'Andre Agassi', country:'USA', countryFlag:'🇺🇸', era:'1986-2006', style:'Baseliner', prime:'1994-1999', gs:8,gs_ro:1,gs_wi:1,gs_us:2,gs_au:4,masters:17, peak:'No.1 (1994)',
-    bio:'El único en ganar los cuatro Grand Slams sobre superficies distintas. Devolución legendaria, figura icónica.',
-    tb_win:0.6,dec_win:0.66,net_win:0.6,height:180,
-    stats:{ serve1pct:0.60,win1st:0.74,win2nd:0.54,returnWin:0.46,winners:38,errors:30,breakConvert:0.48,breakSave:0.63,serve_kmh:210,fh_kmh:155,bh_kmh:148,surface:{hard:1.06,clay:1.00,grass:0.94},
-      rally_short:38,rally_mid:34,rally_long:28,rest_kmh:165,data_type:'estimated'}},
-  { id:'roddick', name:'Andy Roddick', country:'USA', countryFlag:'🇺🇸', era:'2001-2012', style:'Serve & Baseline', prime:'2003-2007', gs:1,gs_ro:0,gs_wi:0,gs_us:1,gs_au:0,masters:5, peak:'No.1 (2003)',
-    bio:'El servicio más rápido de su época (249 km/h). US Open 2003. Cuatro finales de Wimbledon contra Federer.',
-    tb_win:0.66,dec_win:0.64,net_win:0.65,height:188,
-    stats:{ serve1pct:0.65,win1st:0.84,win2nd:0.57,returnWin:0.34,winners:40,errors:30,breakConvert:0.36,breakSave:0.66,serve_kmh:249,fh_kmh:165,bh_kmh:135,surface:{hard:1.06,clay:0.88,grass:1.04},
-      rally_short:47,rally_mid:32,rally_long:21,rest_kmh:148,data_type:'estimated'}},
-  { id:'hewitt', name:'Lleyton Hewitt', country:'AUS', countryFlag:'🇦🇺', era:'1998-2016', style:'Baseliner', prime:'2001-2003', gs:2,gs_ro:0,gs_wi:1,gs_us:1,gs_au:0,masters:6, peak:'No.1 (2001)',
-    bio:'Guerrero incansable. Espíritu competitivo sin igual. Nº1 con solo 20 años. US Open 2001, Wimbledon 2002.',
-    tb_win:0.58,dec_win:0.67,net_win:0.58,height:180,
-    stats:{ serve1pct:0.60,win1st:0.73,win2nd:0.53,returnWin:0.47,winners:30,errors:22,breakConvert:0.48,breakSave:0.67,serve_kmh:200,fh_kmh:140,bh_kmh:138,surface:{hard:1.04,clay:0.96,grass:1.04},
-      rally_short:36,rally_mid:35,rally_long:29,rest_kmh:158,data_type:'estimated'}},
-  { id:'courier', name:'Jim Courier', country:'USA', countryFlag:'🇺🇸', era:'1988-2000', style:'Baseliner', prime:'1992-1993', gs:4,gs_ro:2,gs_wi:0,gs_us:0,gs_au:2,masters:8, peak:'No.1 (1992)',
-    bio:'Especialista en tierra batida con potencia. 4 Grand Slams, incluyendo 2 Roland Garros. Nº1 del mundo en 1992.',
-    tb_win:0.58,dec_win:0.64,net_win:0.56,height:183,
-    stats:{ serve1pct:0.60,win1st:0.73,win2nd:0.53,returnWin:0.44,winners:32,errors:26,breakConvert:0.47,breakSave:0.64,serve_kmh:195,fh_kmh:152,bh_kmh:140,surface:{hard:0.98,clay:1.10,grass:0.90},
-      rally_short:37,rally_mid:34,rally_long:29,rest_kmh:148,data_type:'estimated'}},
-  { id:'becker', name:'Boris Becker', country:'GER', countryFlag:'🇩🇪', era:'1984-1999', style:'Serve & Volley', prime:'1989-1994', gs:5,gs_ro:0,gs_wi:3,gs_us:0,gs_au:2,masters:13, peak:'No.1 (1991)',
-    bio:'Ganó Wimbledon con 17 años. Saque devastador y ataque a la red espectacular. 6 Grand Slams.',
-    tb_win:0.66,dec_win:0.65,net_win:0.74,height:190,
-    stats:{ serve1pct:0.62,win1st:0.80,win2nd:0.57,returnWin:0.36,winners:46,errors:31,breakConvert:0.40,breakSave:0.66,serve_kmh:230,fh_kmh:155,bh_kmh:135,surface:{hard:1.00,clay:0.92,grass:1.12},
-      rally_short:48,rally_mid:31,rally_long:21,rest_kmh:140,data_type:'estimated'}},
-  { id:'edberg', name:'Stefan Edberg', country:'SWE', countryFlag:'🇸🇪', era:'1982-1996', style:'Serve & Volley', prime:'1990-1992', gs:6,gs_ro:0,gs_wi:2,gs_us:2,gs_au:2,masters:3, peak:'No.1 (1990)',
-    bio:'El servicio y volea más elegante de la historia. 6 Grand Slams. Juego de red ejemplar.',
-    tb_win:0.64,dec_win:0.63,net_win:0.76,height:188,
-    stats:{ serve1pct:0.63,win1st:0.79,win2nd:0.57,returnWin:0.37,winners:44,errors:27,breakConvert:0.38,breakSave:0.68,serve_kmh:210,fh_kmh:145,bh_kmh:125,surface:{hard:1.02,clay:0.90,grass:1.12},
-      rally_short:47,rally_mid:32,rally_long:21,rest_kmh:138,data_type:'estimated'}},
-
-  // === ESPAÑOLES LEGENDARIOS ===
-  { id:'kuerten', name:'Gustavo Kuerten', country:'BRA', countryFlag:'🇧🇷', era:'1995-2008', style:'Baseliner', prime:'2000-2001', gs:3,gs_ro:3,gs_wi:0,gs_us:0,gs_au:0,masters:4, peak:'No.1 (2000)',
-    bio:'Guga. El alma de Roland Garros. 3 títulos en París. Nº1 del mundo en 2000. Estilo ofensivo y carisma desbordante.',
-    tb_win:0.58,dec_win:0.62,net_win:0.62,height:191,
-    stats:{ serve1pct:0.61,win1st:0.73,win2nd:0.54,returnWin:0.45,winners:38,errors:28,breakConvert:0.47,breakSave:0.63,serve_kmh:200,fh_kmh:150,bh_kmh:142,surface:{hard:0.94,clay:1.14,grass:0.90},
-      rally_short:38,rally_mid:34,rally_long:28,rest_kmh:150,data_type:'estimated'}},
-  { id:'moya', name:'Carlos Moyá', country:'ESP', countryFlag:'🇪🇸', era:'1994-2010', style:'Baseliner', prime:'1998-2002', gs:1,gs_ro:1,gs_wi:0,gs_us:0,gs_au:0,masters:4, peak:'No.1 (1999)',
-    bio:'Roland Garros 1998. Nº1 del mundo en 1999. Golpes potentes y juego agresivo desde el fondo. Mentor de Rafa Nadal.',
-    tb_win:0.57,dec_win:0.6,net_win:0.6,height:192,
-    stats:{ serve1pct:0.62,win1st:0.74,win2nd:0.54,returnWin:0.44,winners:36,errors:27,breakConvert:0.46,breakSave:0.64,serve_kmh:205,fh_kmh:155,bh_kmh:143,surface:{hard:0.96,clay:1.12,grass:0.90},
-      rally_short:38,rally_mid:34,rally_long:28,rest_kmh:148,data_type:'estimated'}},
-  { id:'ferrero', name:'Juan Carlos Ferrero', country:'ESP', countryFlag:'🇪🇸', era:'1999-2012', style:'Baseliner', prime:'2002-2003', gs:1,gs_ro:1,gs_wi:0,gs_us:0,gs_au:0,masters:4, peak:'No.1 (2003)',
-    bio:'El Mosquito. Roland Garros 2003. Nº1 del mundo ese mismo año. Juego dinámico, gran velocidad de pies y golpes ofensivos.',
-    tb_win:0.56,dec_win:0.62,net_win:0.58,height:183,
-    stats:{ serve1pct:0.61,win1st:0.73,win2nd:0.54,returnWin:0.45,winners:34,errors:25,breakConvert:0.47,breakSave:0.64,serve_kmh:195,fh_kmh:148,bh_kmh:140,surface:{hard:0.94,clay:1.14,grass:0.90},
-      rally_short:37,rally_mid:34,rally_long:29,rest_kmh:148,data_type:'estimated'}},
-  { id:'ferrer', name:'David Ferrer', country:'ESP', countryFlag:'🇪🇸', era:'2000-2019', style:'Baseliner', prime:'2012-2014', gs:0,gs_ro:0,gs_wi:0,gs_us:0,gs_au:0,masters:8, peak:'No.3 (2013)',
-    bio:'La máquina. El jugador que nunca se rinde. Finalista Roland Garros 2013. Más de 700 victorias en el tour. Ejemplo de trabajo y constancia.',
-    tb_win:0.56,dec_win:0.66,net_win:0.56,height:175,
-    stats:{ serve1pct:0.59,win1st:0.72,win2nd:0.53,returnWin:0.47,winners:28,errors:20,breakConvert:0.50,breakSave:0.67,serve_kmh:185,fh_kmh:143,bh_kmh:138,surface:{hard:0.96,clay:1.12,grass:0.88},
-      rally_short:35,rally_mid:35,rally_long:30,rest_kmh:152,data_type:'estimated'}},
-  { id:'bruguera', name:'Sergi Bruguera', country:'ESP', countryFlag:'🇪🇸', era:'1988-2002', style:'Baseliner', prime:'1993-1994', gs:2,gs_ro:2,gs_wi:0,gs_us:0,gs_au:0,masters:2, peak:'No.3 (1994)',
-    bio:'Dos Roland Garros consecutivos (1993-1994). El perfecto especialista en tierra batida. Golpes profundos y alta consistencia.',
-    tb_win:0.55,dec_win:0.62,net_win:0.54,height:188,
-    stats:{ serve1pct:0.58,win1st:0.70,win2nd:0.52,returnWin:0.45,winners:28,errors:22,breakConvert:0.48,breakSave:0.65,serve_kmh:185,fh_kmh:140,bh_kmh:135,surface:{hard:0.92,clay:1.16,grass:0.88},
-      rally_short:33,rally_mid:34,rally_long:33,rest_kmh:148,data_type:'estimated'}},
-  { id:'costa', name:'Albert Costa', country:'ESP', countryFlag:'🇪🇸', era:'1993-2006', style:'Baseliner', prime:'2001-2002', gs:1,gs_ro:1,gs_wi:0,gs_us:0,gs_au:0,masters:1, peak:'No.6 (2002)',
-    bio:'Roland Garros 2002. El prototipo del especialista de tierra batida español. Gran solidez y resistencia física.',
-    tb_win:0.54,dec_win:0.6,net_win:0.54,height:188,
-    stats:{ serve1pct:0.58,win1st:0.70,win2nd:0.52,returnWin:0.45,winners:26,errors:21,breakConvert:0.47,breakSave:0.65,serve_kmh:182,fh_kmh:138,bh_kmh:133,surface:{hard:0.90,clay:1.15,grass:0.87},
-      rally_short:33,rally_mid:34,rally_long:33,rest_kmh:145,data_type:'estimated'}},
-  { id:'robredo', name:'Tommy Robredo', country:'ESP', countryFlag:'🇪🇸', era:'1999-2015', style:'Baseliner', prime:'2006-2009', gs:0,gs_ro:0,gs_wi:0,gs_us:0,gs_au:0,masters:2, peak:'No.5 (2006)',
-    bio:'Gran defensor y corredor. Top 5 en 2006. Conocido por sus remontadas espectaculares al US Open 2013.',
-    tb_win:0.56,dec_win:0.62,net_win:0.56,height:178,
-    stats:{ serve1pct:0.59,win1st:0.71,win2nd:0.52,returnWin:0.46,winners:27,errors:22,breakConvert:0.47,breakSave:0.65,serve_kmh:188,fh_kmh:140,bh_kmh:136,surface:{hard:0.95,clay:1.10,grass:0.88},
-      rally_short:37,rally_mid:34,rally_long:29,rest_kmh:150,data_type:'estimated'}},
-  { id:'verdasco', name:'Fernando Verdasco', country:'ESP', countryFlag:'🇪🇸', era:'2001-2023', style:'Baseliner', prime:'2009-2012', gs:0,gs_ro:0,gs_wi:0,gs_us:0,gs_au:0,masters:1, peak:'No.7 (2009)',
-    bio:'Revés a dos manos demoledor. Semifinalista Australian Open 2009 tras ganar a Nadal. Uno de los zurdos más temibles del tour.',
-    tb_win:0.58,dec_win:0.6,net_win:0.6,height:188,
-    stats:{ serve1pct:0.61,win1st:0.74,win2nd:0.54,returnWin:0.43,winners:38,errors:30,breakConvert:0.43,breakSave:0.62,serve_kmh:210,fh_kmh:158,bh_kmh:152,surface:{hard:0.98,clay:1.06,grass:0.95},
-      rally_short:40,rally_mid:34,rally_long:26,rest_kmh:150,data_type:'estimated'}},
-  { id:'lopez', name:'Feliciano López', country:'ESP', countryFlag:'🇪🇸', era:'2000-2022', style:'Serve & Volley', prime:'2005-2012', gs:0,gs_ro:0,gs_wi:0,gs_us:0,gs_au:0,masters:0, peak:'No.12 (2005)',
-    bio:'El último verdadero servicio-volea del circuito. Slice icónico. El único jugador en participar en todos los torneos de Grand Slam del siglo XXI.',
-    tb_win:0.6,dec_win:0.58,net_win:0.76,height:188,
-    stats:{ serve1pct:0.63,win1st:0.78,win2nd:0.55,returnWin:0.36,winners:38,errors:28,breakConvert:0.38,breakSave:0.66,serve_kmh:215,fh_kmh:148,bh_kmh:122,surface:{hard:0.97,clay:0.92,grass:1.08},
-      rally_short:44,rally_mid:32,rally_long:24,rest_kmh:138,data_type:'estimated'}},
-
-  // === ERA CLÁSICA ===
-  { id:'lendl', name:'Ivan Lendl', country:'CZE', countryFlag:'🇨🇿', era:'1978-1994', style:'Baseliner', prime:'1985-1989', gs:8,gs_ro:3,gs_wi:0,gs_us:3,gs_au:2,masters:22, peak:'No.1 (1983)',
-    bio:'El primer jugador moderno. Revolucionó el entrenamiento físico del tenis. 8 Grand Slams, Nº1 durante 270 semanas.',
-    tb_win:0.64,dec_win:0.68,net_win:0.6,height:188,
-    stats:{ serve1pct:0.61,win1st:0.73,win2nd:0.53,returnWin:0.44,winners:35,errors:26,breakConvert:0.46,breakSave:0.64,serve_kmh:200,fh_kmh:152,bh_kmh:143,surface:{hard:1.02,clay:1.08,grass:0.92},
-      rally_short:36,rally_mid:34,rally_long:30,rest_kmh:155,data_type:'estimated'}},
-  { id:'mcenroe', name:'John McEnroe', country:'USA', countryFlag:'🇺🇸', era:'1978-1994', style:'Serve & Volley', prime:'1981-1984', gs:8,gs_ro:1,gs_wi:3,gs_us:4,gs_au:0,masters:15, peak:'No.1 (1981)',
-    bio:'El genio irascible. Manos extraordinarias, volea insuperable. 7 Grand Slams. Dominio total en hierba.',
-    tb_win:0.68,dec_win:0.66,net_win:0.82,height:180,
-    stats:{ serve1pct:0.68,win1st:0.78,win2nd:0.58,returnWin:0.42,winners:44,errors:29,breakConvert:0.44,breakSave:0.67,serve_kmh:195,fh_kmh:140,bh_kmh:125,surface:{hard:1.00,clay:0.93,grass:1.10},
-      rally_short:46,rally_mid:32,rally_long:22,rest_kmh:148,data_type:'estimated'}},
-  { id:'connors', name:'Jimmy Connors', country:'USA', countryFlag:'🇺🇸', era:'1972-1996', style:'Baseliner', prime:'1974-1978', gs:8,gs_ro:0,gs_wi:2,gs_us:5,gs_au:1,masters:17, peak:'No.1 (1974)',
-    bio:'Guerrero eterno. 8 Grand Slams, recordman de victorias en el tour. Estilo agresivo único.',
-    tb_win:0.6,dec_win:0.68,net_win:0.6,height:178,
-    stats:{ serve1pct:0.60,win1st:0.71,win2nd:0.54,returnWin:0.45,winners:32,errors:27,breakConvert:0.46,breakSave:0.63,serve_kmh:188,fh_kmh:145,bh_kmh:138,surface:{hard:1.04,clay:0.96,grass:1.00},
-      rally_short:37,rally_mid:34,rally_long:29,rest_kmh:155,data_type:'estimated'}},
-  { id:'borg', name:'Björn Borg', country:'SWE', countryFlag:'🇸🇪', era:'1973-1983', style:'Baseliner', prime:'1977-1981', gs:11,gs_ro:6,gs_wi:5,gs_us:0,gs_au:0,masters:4, peak:'No.1 (1977)',
-    bio:'El Iceman. 11 Grand Slams antes de retirarse con 26 años. 5 Roland Garros y 5 Wimbledon consecutivos.',
-    tb_win:0.62,dec_win:0.7,net_win:0.6,height:180,
-    stats:{ serve1pct:0.65,win1st:0.72,win2nd:0.55,returnWin:0.46,winners:34,errors:20,breakConvert:0.48,breakSave:0.70,serve_kmh:190,fh_kmh:148,bh_kmh:140,surface:{hard:0.96,clay:1.14,grass:1.06},
-      rally_short:35,rally_mid:33,rally_long:32,rest_kmh:150,data_type:'estimated'}},
-  { id:'wilander', name:'Mats Wilander', country:'SWE', countryFlag:'🇸🇪', era:'1982-1996', style:'Baseliner', prime:'1985-1988', gs:7,gs_ro:3,gs_wi:0,gs_us:1,gs_au:3,masters:6, peak:'No.1 (1988)',
-    bio:'7 Grand Slams. Nº1 en 1988 ganando tres Grand Slams. Estratega brillante, juego adaptable a todas las superficies.',
-    tb_win:0.58,dec_win:0.68,net_win:0.56,height:183,
-    stats:{ serve1pct:0.60,win1st:0.70,win2nd:0.54,returnWin:0.44,winners:28,errors:21,breakConvert:0.46,breakSave:0.65,serve_kmh:185,fh_kmh:142,bh_kmh:138,surface:{hard:0.98,clay:1.10,grass:0.94},
-      rally_short:33,rally_mid:34,rally_long:33,rest_kmh:148,data_type:'estimated'}},
-  { id:'vilas', name:'Guillermo Vilas', country:'ARG', countryFlag:'🇦🇷', era:'1969-1992', style:'Baseliner', prime:'1977-1978', gs:4,gs_ro:1,gs_wi:0,gs_us:1,gs_au:2,masters:9, peak:'No.2 (1977)',
-    bio:'El Príncipe de la Tierra. 4 Grand Slams. En 1977 ganó 59 partidos consecutivos. Precursor del tenis latinoamericano.',
-    tb_win:0.56,dec_win:0.64,net_win:0.54,height:178,
-    stats:{ serve1pct:0.58,win1st:0.70,win2nd:0.52,returnWin:0.44,winners:30,errors:22,breakConvert:0.47,breakSave:0.64,serve_kmh:182,fh_kmh:145,bh_kmh:138,surface:{hard:0.92,clay:1.14,grass:0.88},
-      rally_short:33,rally_mid:34,rally_long:33,rest_kmh:145,data_type:'estimated'}},
-  { id:'nastase', name:'Ilie Năstase', country:'ROU', countryFlag:'🇷🇴', era:'1965-1985', style:'All-court', prime:'1972-1975', gs:3,gs_ro:2,gs_wi:0,gs_us:1,gs_au:0,masters:5, peak:'No.1 (1973)',
-    bio:'El Conde. Tenista más entretenido de su época. Talento natural supremo, creatividad sin límites. Roland Garros 1973, US Open 1972.',
-    tb_win:0.6,dec_win:0.62,net_win:0.66,height:183,
-    stats:{ serve1pct:0.62,win1st:0.73,win2nd:0.56,returnWin:0.44,winners:40,errors:33,breakConvert:0.46,breakSave:0.62,serve_kmh:185,fh_kmh:140,bh_kmh:130,surface:{hard:0.98,clay:1.08,grass:1.00},
-      rally_short:41,rally_mid:33,rally_long:26,rest_kmh:145,data_type:'estimated'}},
-  { id:'rosewall', name:'Ken Rosewall', country:'AUS', countryFlag:'🇦🇺', era:'1956-1977', style:'All-court', prime:'1971-1974', gs:8,gs_ro:2,gs_wi:0,gs_us:2,gs_au:4,masters:0, peak:'No.1 (1963)',
-    bio:'Mr. Tennis. 8 Grand Slams en 20 años de carrera. Backhand de una mano considerado el mejor de la historia.',
-    tb_win:0.6,dec_win:0.64,net_win:0.72,height:170,
-    stats:{ serve1pct:0.61,win1st:0.73,win2nd:0.55,returnWin:0.45,winners:36,errors:22,breakConvert:0.46,breakSave:0.66,serve_kmh:175,fh_kmh:135,bh_kmh:128,surface:{hard:0.98,clay:1.06,grass:1.04},
-      rally_short:39,rally_mid:33,rally_long:28,rest_kmh:140,data_type:'estimated'}},
-  { id:'newcombe', name:'John Newcombe', country:'AUS', countryFlag:'🇦🇺', era:'1960-1981', style:'Serve & Volley', prime:'1967-1974', gs:7,gs_ro:0,gs_wi:3,gs_us:2,gs_au:2,masters:0, peak:'No.1 (1967)',
-    bio:'7 Grand Slams, 3 Wimbledon. El mejor servicio-volea de los años 70. Bigote icónico.',
-    tb_win:0.64,dec_win:0.64,net_win:0.78,height:183,
-    stats:{ serve1pct:0.63,win1st:0.80,win2nd:0.57,returnWin:0.36,winners:44,errors:28,breakConvert:0.40,breakSave:0.67,serve_kmh:200,fh_kmh:148,bh_kmh:125,surface:{hard:0.98,clay:0.92,grass:1.12},
-      rally_short:47,rally_mid:31,rally_long:22,rest_kmh:135,data_type:'estimated'}},
-
-  // === 2000s-2010s TOP PLAYERS ===
-  { id:'murray', name:'Andy Murray', country:'GBR', countryFlag:'🇬🇧', era:'2005-present', style:'Baseliner', prime:'2012-2016', gs:3,gs_ro:0,gs_wi:2,gs_us:1,gs_au:0,masters:14, peak:'No.1 (2016)',
-    bio:'3 Grand Slams, Nº1 en 2016. El mejor devolvedor de su generación. Wimbledon 2013 y 2016, US Open 2012.',
-    tb_win:0.62,dec_win:0.68,net_win:0.62,height:190,
-    stats:{ serve1pct:0.61,win1st:0.75,win2nd:0.54,returnWin:0.49,winners:32,errors:22,breakConvert:0.49,breakSave:0.67,serve_kmh:215,fh_kmh:148,bh_kmh:148,surface:{hard:1.02,clay:0.98,grass:1.06},
-      rally_short:36,rally_mid:34,rally_long:30,rest_kmh:162,data_type:'real'}},
-  { id:'wawrinka', name:'Stan Wawrinka', country:'SUI', countryFlag:'🇨🇭', era:'2004-present', style:'Baseliner', prime:'2014-2016', gs:3,gs_ro:1,gs_wi:0,gs_us:1,gs_au:1,masters:1, peak:'No.3 (2014)',
-    bio:'3 Grand Slams. Backhand de una mano el más potente del tour moderno. El "Stan-the-Man" de las grandes citas.',
-    tb_win:0.62,dec_win:0.62,net_win:0.64,height:183,
-    stats:{ serve1pct:0.62,win1st:0.76,win2nd:0.55,returnWin:0.43,winners:43,errors:30,breakConvert:0.44,breakSave:0.63,serve_kmh:220,fh_kmh:155,bh_kmh:158,surface:{hard:1.03,clay:1.06,grass:0.97},
-      rally_short:42,rally_mid:34,rally_long:24,rest_kmh:150,data_type:'real'}},
-  { id:'nalbandian', name:'David Nalbandian', country:'ARG', countryFlag:'🇦🇷', era:'1999-2013', style:'Baseliner', prime:'2005-2008', gs:0,gs_ro:0,gs_wi:0,gs_us:0,gs_au:0,masters:11, peak:'No.3 (2006)',
-    bio:'El talento malgastado. Revés prodigioso. Finalista Wimbledon 2002. Derrotó a los Big 4 en el mismo torneo (Masters 2005).',
-    tb_win:0.64,dec_win:0.64,net_win:0.66,height:183,
-    stats:{ serve1pct:0.60,win1st:0.74,win2nd:0.54,returnWin:0.46,winners:36,errors:27,breakConvert:0.47,breakSave:0.65,serve_kmh:205,fh_kmh:152,bh_kmh:152,surface:{hard:1.00,clay:1.06,grass:1.00},
-      rally_short:39,rally_mid:34,rally_long:27,rest_kmh:155,data_type:'estimated'}},
-  { id:'safin', name:'Marat Safin', country:'RUS', countryFlag:'🇷🇺', era:'1997-2009', style:'All-court', prime:'2000-2005', gs:3,gs_ro:1,gs_wi:0,gs_us:1,gs_au:1,masters:9, peak:'No.1 (2000)',
-    bio:'El talento más explosivo jamás visto. 2 Grand Slams. Cuando estaba bien, era imbatible para cualquiera.',
-    tb_win:0.62,dec_win:0.6,net_win:0.64,height:193,
-    stats:{ serve1pct:0.62,win1st:0.78,win2nd:0.56,returnWin:0.43,winners:45,errors:35,breakConvert:0.44,breakSave:0.63,serve_kmh:225,fh_kmh:162,bh_kmh:155,surface:{hard:1.05,clay:0.97,grass:1.02},
-      rally_short:42,rally_mid:33,rally_long:25,rest_kmh:150,data_type:'estimated'}},
-  { id:'davydenko', name:'Nikolay Davydenko', country:'RUS', countryFlag:'🇷🇺', era:'2000-2014', style:'Baseliner', prime:'2006-2009', gs:0,gs_ro:0,gs_wi:0,gs_us:0,gs_au:0,masters:5, peak:'No.3 (2006)',
-    bio:'Golpes planos precisos, gran consistencia. Cuatro finales de Masters. Finalista Roland Garros 2006.',
-    tb_win:0.6,dec_win:0.62,net_win:0.58,height:180,
-    stats:{ serve1pct:0.60,win1st:0.73,win2nd:0.53,returnWin:0.46,winners:32,errors:23,breakConvert:0.47,breakSave:0.65,serve_kmh:195,fh_kmh:148,bh_kmh:145,surface:{hard:1.02,clay:1.02,grass:0.92},
-      rally_short:39,rally_mid:34,rally_long:27,rest_kmh:150,data_type:'estimated'}},
-  { id:'gasquet', name:'Richard Gasquet', country:'FRA', countryFlag:'🇫🇷', era:'2002-present', style:'All-court', prime:'2007-2015', gs:0,gs_ro:0,gs_wi:0,gs_us:0,gs_au:0,masters:1, peak:'No.7 (2007)',
-    bio:'El backhand más hermoso del tenis moderno. Nunca ganó un Grand Slam pero fue un espectáculo permanente.',
-    tb_win:0.6,dec_win:0.58,net_win:0.64,height:185,
-    stats:{ serve1pct:0.62,win1st:0.75,win2nd:0.55,returnWin:0.42,winners:38,errors:28,breakConvert:0.43,breakSave:0.63,serve_kmh:210,fh_kmh:148,bh_kmh:148,surface:{hard:1.00,clay:1.04,grass:1.02},
-      rally_short:40,rally_mid:34,rally_long:26,rest_kmh:148,data_type:'estimated'}},
-  { id:'soderling', name:'Robin Söderling', country:'SWE', countryFlag:'🇸🇪', era:'2001-2011', style:'Baseliner', prime:'2009-2010', gs:0,gs_ro:0,gs_wi:0,gs_us:0,gs_au:0,masters:2, peak:'No.4 (2010)',
-    bio:'El único que derrotó a Nadal en Roland Garros (2009). Golpes planos devastadores. Dos finales en Roland Garros.',
-    tb_win:0.6,dec_win:0.58,net_win:0.62,height:193,
-    stats:{ serve1pct:0.63,win1st:0.77,win2nd:0.55,returnWin:0.42,winners:43,errors:30,breakConvert:0.42,breakSave:0.63,serve_kmh:220,fh_kmh:162,bh_kmh:150,surface:{hard:1.02,clay:1.05,grass:0.98},
-      rally_short:43,rally_mid:33,rally_long:24,rest_kmh:145,data_type:'estimated'}},
-  { id:'simon', name:'Gilles Simon', country:'FRA', countryFlag:'🇫🇷', era:'2002-2022', style:'Baseliner', prime:'2008-2012', gs:0,gs_ro:0,gs_wi:0,gs_us:0,gs_au:0,masters:1, peak:'No.6 (2009)',
-    bio:'Maestro de la defensa y el contrataque. Velocidad de pies excepcional. Más de 450 victorias en el tour.',
-    tb_win:0.56,dec_win:0.62,net_win:0.52,height:178,
-    stats:{ serve1pct:0.58,win1st:0.71,win2nd:0.52,returnWin:0.47,winners:26,errors:19,breakConvert:0.48,breakSave:0.67,serve_kmh:190,fh_kmh:140,bh_kmh:138,surface:{hard:1.00,clay:1.04,grass:0.90},
-      rally_short:35,rally_mid:35,rally_long:30,rest_kmh:155,data_type:'estimated'}},
-  { id:'haas', name:'Tommy Haas', country:'GER', countryFlag:'🇩🇪', era:'1996-2017', style:'All-court', prime:'2002-2007', gs:0,gs_ro:0,gs_wi:0,gs_us:0,gs_au:0,masters:2, peak:'No.2 (2002)',
-    bio:'Uno de los jugadores más elegantes del tour. Lesiones truncaron su carrera. Dos veces Nº2 del mundo.',
-    tb_win:0.62,dec_win:0.62,net_win:0.66,height:188,
-    stats:{ serve1pct:0.62,win1st:0.76,win2nd:0.55,returnWin:0.41,winners:40,errors:27,breakConvert:0.42,breakSave:0.65,serve_kmh:215,fh_kmh:152,bh_kmh:132,surface:{hard:1.02,clay:1.00,grass:1.04},
-      rally_short:41,rally_mid:34,rally_long:25,rest_kmh:145,data_type:'estimated'}},
-  { id:'ljubicic', name:'Ivan Ljubičić', country:'CRO', countryFlag:'🇭🇷', era:'1998-2012', style:'Serve & Baseline', prime:'2005-2006', gs:0,gs_ro:0,gs_wi:0,gs_us:0,gs_au:0,masters:3, peak:'No.3 (2006)',
-    bio:'Saque y golpe de derecha devastadores. Nº3 del mundo en 2006. Eliminó a Federer en Indian Wells 2010.',
-    tb_win:0.62,dec_win:0.6,net_win:0.66,height:193,
-    stats:{ serve1pct:0.64,win1st:0.79,win2nd:0.56,returnWin:0.39,winners:40,errors:28,breakConvert:0.40,breakSave:0.65,serve_kmh:225,fh_kmh:158,bh_kmh:140,surface:{hard:1.04,clay:1.00,grass:1.00},
-      rally_short:44,rally_mid:32,rally_long:24,rest_kmh:140,data_type:'estimated'}},
-  { id:'gonzalez', name:'Fernando González', country:'CHI', countryFlag:'🇨🇱', era:'1999-2012', style:'Baseliner', prime:'2007-2008', gs:0,gs_ro:0,gs_wi:0,gs_us:0,gs_au:0,masters:3, peak:'No.4 (2007)',
-    bio:'La derecha más potente del tour en su época. Medalla de oro en Pekín 2008. Finalista Australian Open 2007.',
-    tb_win:0.6,dec_win:0.6,net_win:0.64,height:183,
-    stats:{ serve1pct:0.62,win1st:0.77,win2nd:0.55,returnWin:0.42,winners:46,errors:34,breakConvert:0.43,breakSave:0.62,serve_kmh:210,fh_kmh:168,bh_kmh:138,surface:{hard:1.03,clay:1.04,grass:0.96},
-      rally_short:43,rally_mid:33,rally_long:24,rest_kmh:145,data_type:'estimated'}},
-  { id:'coria', name:'Guillermo Coria', country:'ARG', countryFlag:'🇦🇷', era:'1999-2009', style:'Baseliner', prime:'2003-2004', gs:0,gs_ro:0,gs_wi:0,gs_us:0,gs_au:0,masters:4, peak:'No.3 (2004)',
-    bio:'El Mago. Increíbles manos y golpes cortados excepcionales. Finalista Roland Garros 2004. Suspendido por dopaje un año.',
-    tb_win:0.56,dec_win:0.62,net_win:0.56,height:175,
-    stats:{ serve1pct:0.59,win1st:0.70,win2nd:0.52,returnWin:0.46,winners:32,errors:23,breakConvert:0.48,breakSave:0.66,serve_kmh:185,fh_kmh:143,bh_kmh:140,surface:{hard:0.94,clay:1.14,grass:0.88},
-      rally_short:36,rally_mid:34,rally_long:30,rest_kmh:152,data_type:'estimated'}},
-  { id:'blake', name:'James Blake', country:'USA', countryFlag:'🇺🇸', era:'2001-2013', style:'Baseliner', prime:'2005-2006', gs:0,gs_ro:0,gs_wi:0,gs_us:0,gs_au:0,masters:1, peak:'No.4 (2006)',
-    bio:'Uno de los golpes de derecha más explosivos del tour. Velocidad extraordinaria. Historia de superación tras lesión grave.',
-    tb_win:0.58,dec_win:0.6,net_win:0.62,height:188,
-    stats:{ serve1pct:0.62,win1st:0.76,win2nd:0.54,returnWin:0.43,winners:42,errors:30,breakConvert:0.43,breakSave:0.62,serve_kmh:215,fh_kmh:163,bh_kmh:143,surface:{hard:1.04,clay:0.96,grass:1.00},
-      rally_short:42,rally_mid:33,rally_long:25,rest_kmh:148,data_type:'estimated'}},
-
-
-  // === ERA AÑOS 80 ===
-  { id:'cash', name:'Pat Cash', country:'AUS', countryFlag:'🇦🇺', era:'1982-1997', style:'Serve & Volley', prime:'1987-1988', gs:1,gs_ro:0,gs_wi:1,gs_us:0,gs_au:0,masters:2, peak:'No.4 (1988)',
-    bio:'Wimbledon 1987. Conocido por subir a las gradas a celebrar con su familia. Saque y volea agresivos.',
-    tb_win:0.62,dec_win:0.62,net_win:0.76,height:183,
-    stats:{ serve1pct:0.63,win1st:0.80,win2nd:0.57,returnWin:0.35,winners:42,errors:30,breakConvert:0.38,breakSave:0.66,serve_kmh:210,fh_kmh:148,bh_kmh:125,surface:{hard:0.96,clay:0.88,grass:1.12},
-      rally_short:48,rally_mid:31,rally_long:21,rest_kmh:135,data_type:'estimated'}},
-  { id:'courier_j', name:'Jim Courier', country:'USA', countryFlag:'🇺🇸', era:'1988-2000', style:'Baseliner', prime:'1992-1993', gs:4,gs_ro:2,gs_wi:0,gs_us:0,gs_au:2,masters:8, peak:'No.1 (1992)',
-    bio:'Potencia y atletismo. 4 Grand Slams. Primer Nº1 americano de la era Open en ganar Roland Garros.',
-    tb_win:0.58,dec_win:0.64,net_win:0.56,height:183,
-    stats:{ serve1pct:0.60,win1st:0.73,win2nd:0.53,returnWin:0.44,winners:32,errors:26,breakConvert:0.47,breakSave:0.64,serve_kmh:195,fh_kmh:152,bh_kmh:140,surface:{hard:0.98,clay:1.10,grass:0.90},
-      rally_short:37,rally_mid:34,rally_long:29,rest_kmh:148,data_type:'estimated'}},
-  { id:'chang', name:'Michael Chang', country:'USA', countryFlag:'🇺🇸', era:'1988-2003', style:'Baseliner', prime:'1989-1996', gs:1,gs_ro:1,gs_wi:0,gs_us:0,gs_au:0,masters:2, peak:'No.2 (1996)',
-    bio:'Roland Garros 1989 con 17 años, el más joven de la historia. Velocidad, defensa y mentalidad de hierro.',
-    tb_win:0.54,dec_win:0.64,net_win:0.54,height:175,
-    stats:{ serve1pct:0.58,win1st:0.71,win2nd:0.52,returnWin:0.47,winners:26,errors:20,breakConvert:0.48,breakSave:0.67,serve_kmh:180,fh_kmh:138,bh_kmh:135,surface:{hard:0.96,clay:1.08,grass:0.90},
-      rally_short:34,rally_mid:35,rally_long:31,rest_kmh:155,data_type:'estimated'}},
-  { id:'krajicek', name:'Richard Krajicek', country:'NED', countryFlag:'🇳🇱', era:'1989-2003', style:'Serve & Volley', prime:'1994-1998', gs:1,gs_ro:0,gs_wi:1,gs_us:0,gs_au:0,masters:2, peak:'No.4 (1999)',
-    bio:'Wimbledon 1996. El mayor saque de la historia hasta entonces. Cuando servía bien era imbatible.',
-    tb_win:0.66,dec_win:0.62,net_win:0.76,height:198,
-    stats:{ serve1pct:0.65,win1st:0.83,win2nd:0.58,returnWin:0.33,winners:45,errors:30,breakConvert:0.35,breakSave:0.68,serve_kmh:240,fh_kmh:155,bh_kmh:130,surface:{hard:1.00,clay:0.88,grass:1.14},
-      rally_short:51,rally_mid:29,rally_long:20,rest_kmh:132,data_type:'estimated'}},
-  { id:'ivanisevic', name:'Goran Ivanišević', country:'CRO', countryFlag:'🇭🇷', era:'1988-2004', style:'Serve & Volley', prime:'1992-1998', gs:1,gs_ro:0,gs_wi:1,gs_us:0,gs_au:0,masters:1, peak:'No.2 (1994)',
-    bio:'Wimbledon 2001 como wild card. El saque más rápido de su época. Aces a mansalva. Carácter impredecible.',
-    tb_win:0.64,dec_win:0.6,net_win:0.72,height:193,
-    stats:{ serve1pct:0.63,win1st:0.83,win2nd:0.57,returnWin:0.31,winners:50,errors:36,breakConvert:0.34,breakSave:0.66,serve_kmh:243,fh_kmh:155,bh_kmh:128,surface:{hard:0.98,clay:0.86,grass:1.16},
-      rally_short:52,rally_mid:29,rally_long:19,rest_kmh:132,data_type:'estimated'}},
-  { id:'philippoussis', name:'Mark Philippoussis', country:'AUS', countryFlag:'🇦🇺', era:'1994-2006', style:'Serve & Volley', prime:'1998-2003', gs:0,gs_ro:0,gs_wi:0,gs_us:0,gs_au:0,masters:3, peak:'No.8 (1999)',
-    bio:'El Scud. Finalista Wimbledon 2003. Saque explosivo, hasta 230 km/h de forma consistente. Lesiones limitaron su carrera.',
-    tb_win:0.62,dec_win:0.58,net_win:0.72,height:196,
-    stats:{ serve1pct:0.63,win1st:0.82,win2nd:0.57,returnWin:0.32,winners:47,errors:33,breakConvert:0.35,breakSave:0.65,serve_kmh:238,fh_kmh:158,bh_kmh:128,surface:{hard:1.00,clay:0.86,grass:1.12},
-      rally_short:50,rally_mid:30,rally_long:20,rest_kmh:132,data_type:'estimated'}},
-  { id:'pioline', name:'Cédric Pioline', country:'FRA', countryFlag:'🇫🇷', era:'1990-2002', style:'All-court', prime:'1995-1999', gs:0,gs_ro:0,gs_wi:0,gs_us:0,gs_au:0,masters:1, peak:'No.5 (1997)',
-    bio:'Dos finales de Grand Slam (Wimbledon 97, US Open 93). El mejor tenista francés de los 90. Juego variado y sólido.',
-    tb_win:0.58,dec_win:0.58,net_win:0.62,height:188,
-    stats:{ serve1pct:0.61,win1st:0.74,win2nd:0.53,returnWin:0.42,winners:34,errors:26,breakConvert:0.42,breakSave:0.63,serve_kmh:205,fh_kmh:148,bh_kmh:135,surface:{hard:1.00,clay:0.98,grass:1.02},
-      rally_short:40,rally_mid:34,rally_long:26,rest_kmh:142,data_type:'estimated'}},
-
-  // === ACTUALIDAD (post-2015) ===
-  { id:'thiem', name:'Dominic Thiem', country:'AUT', countryFlag:'🇦🇹', era:'2011-2022', style:'All-court', prime:'2018-2020', gs:1,gs_ro:0,gs_wi:0,gs_us:1,gs_au:0,masters:5, peak:'No.3 (2020)',
-    bio:'US Open 2020. Revés potente y despiadado. Tres finales en Roland Garros. Uno de los jugadores más técnicos de su generación.',
-    tb_win:0.6,dec_win:0.62,net_win:0.64,height:185,
-    stats:{ serve1pct:0.62,win1st:0.76,win2nd:0.55,returnWin:0.44,winners:44,errors:28,breakConvert:0.45,breakSave:0.64,serve_kmh:215,fh_kmh:162,bh_kmh:158,surface:{hard:1.03,clay:1.08,grass:0.95},
-      rally_short:41,rally_mid:33,rally_long:26,rest_kmh:155,data_type:'real'}},
-  { id:'berrettini', name:'Matteo Berrettini', country:'ITA', countryFlag:'🇮🇹', era:'2015-present', style:'Serve & Baseline', prime:'2021-present', gs:0,gs_ro:0,gs_wi:0,gs_us:0,gs_au:0,masters:6, peak:'No.6 (2021)',
-    bio:'Finalista Wimbledon 2021. Saque y derecha devastadores. El italiano más exitoso desde Panatta.',
-    tb_win:0.62,dec_win:0.62,net_win:0.7,height:196,
-    stats:{ serve1pct:0.64,win1st:0.80,win2nd:0.56,returnWin:0.39,winners:44,errors:29,breakConvert:0.40,breakSave:0.64,serve_kmh:235,fh_kmh:168,bh_kmh:140,surface:{hard:1.03,clay:1.00,grass:1.08},
-      rally_short:44,rally_mid:33,rally_long:23,rest_kmh:148,data_type:'real'}},
-  { id:'ruud', name:'Casper Ruud', country:'NOR', countryFlag:'🇳🇴', era:'2017-present', style:'Baseliner', prime:'2022-present', gs:0,gs_ro:0,gs_wi:0,gs_us:0,gs_au:0,masters:4, peak:'No.2 (2022)',
-    bio:'Tres finales de Grand Slam. El mejor tenista escandinavo desde Wilander. Gran especialista en tierra.',
-    tb_win:0.58,dec_win:0.62,net_win:0.58,height:183,
-    stats:{ serve1pct:0.61,win1st:0.74,win2nd:0.54,returnWin:0.44,winners:33,errors:23,breakConvert:0.47,breakSave:0.65,serve_kmh:205,fh_kmh:150,bh_kmh:145,surface:{hard:0.98,clay:1.12,grass:0.92},
-      rally_short:37,rally_mid:34,rally_long:29,rest_kmh:148,data_type:'real'}},
-  { id:'fritz', name:'Taylor Fritz', country:'USA', countryFlag:'🇺🇸', era:'2016-present', style:'Serve & Baseline', prime:'2022-present', gs:0,gs_ro:0,gs_wi:0,gs_us:0,gs_au:0,masters:4, peak:'No.4 (2022)',
-    bio:'El mejor americano actual. Gran saque y derecha potente. Indian Wells 2022. Contendiente serio a Grand Slams.',
-    tb_win:0.62,dec_win:0.62,net_win:0.66,height:196,
-    stats:{ serve1pct:0.63,win1st:0.78,win2nd:0.55,returnWin:0.41,winners:40,errors:26,breakConvert:0.42,breakSave:0.64,serve_kmh:225,fh_kmh:158,bh_kmh:145,surface:{hard:1.06,clay:0.93,grass:1.04},
-      rally_short:42,rally_mid:34,rally_long:24,rest_kmh:148,data_type:'real'}},
-  { id:'rublev', name:'Andrey Rublev', country:'RUS', countryFlag:'🇷🇺', era:'2015-present', style:'Baseliner', prime:'2020-present', gs:0,gs_ro:0,gs_wi:0,gs_us:0,gs_au:0,masters:7, peak:'No.5 (2022)',
-    bio:'Derecha plana y poderosa. Récord de 10 títulos seguidos (distintos torneos) en un año. Enorme potencial.',
-    tb_win:0.6,dec_win:0.62,net_win:0.62,height:188,
-    stats:{ serve1pct:0.62,win1st:0.76,win2nd:0.54,returnWin:0.43,winners:42,errors:28,breakConvert:0.43,breakSave:0.63,serve_kmh:220,fh_kmh:165,bh_kmh:148,surface:{hard:1.04,clay:1.04,grass:0.96},
-      rally_short:41,rally_mid:33,rally_long:26,rest_kmh:152,data_type:'real'}},
-  { id:'dimitrov', name:'Grigor Dimitrov', country:'BUL', countryFlag:'🇧🇬', era:'2009-present', style:'All-court', prime:'2017-2018', gs:0,gs_ro:0,gs_wi:0,gs_us:0,gs_au:0,masters:3, peak:'No.3 (2017)',
-    bio:'Llamado "Baby Fed" por su estilo elegante. Masters 2017. Uno de los talentos más puros del tour.',
-    tb_win:0.62,dec_win:0.6,net_win:0.68,height:191,
-    stats:{ serve1pct:0.62,win1st:0.76,win2nd:0.55,returnWin:0.42,winners:40,errors:26,breakConvert:0.43,breakSave:0.64,serve_kmh:215,fh_kmh:155,bh_kmh:133,surface:{hard:1.04,clay:0.97,grass:1.04},
-      rally_short:42,rally_mid:34,rally_long:24,rest_kmh:148,data_type:'real'}},
-  { id:'nishikori', name:'Kei Nishikori', country:'JPN', countryFlag:'🇯🇵', era:'2007-present', style:'Baseliner', prime:'2014-2016', gs:0,gs_ro:0,gs_wi:0,gs_us:0,gs_au:0,masters:8, peak:'No.4 (2014)',
-    bio:'Finalista US Open 2014. El tenista asiático más exitoso de la historia. Velocidad de pelota y anticipación excepcionales.',
-    tb_win:0.58,dec_win:0.62,net_win:0.62,height:178,
-    stats:{ serve1pct:0.59,win1st:0.73,win2nd:0.53,returnWin:0.46,winners:32,errors:23,breakConvert:0.47,breakSave:0.65,serve_kmh:200,fh_kmh:148,bh_kmh:148,surface:{hard:1.02,clay:1.02,grass:0.94},
-      rally_short:37,rally_mid:35,rally_long:28,rest_kmh:158,data_type:'real'}},
-  { id:'raonic', name:'Milos Raonic', country:'CAN', countryFlag:'🇨🇦', era:'2009-present', style:'Serve & Baseline', prime:'2014-2017', gs:0,gs_ro:0,gs_wi:0,gs_us:0,gs_au:0,masters:2, peak:'No.3 (2016)',
-    bio:'Uno de los mejores servicios del tour. Finalista Wimbledon 2016. Saque plano al cuerpo imposible de devolver.',
-    tb_win:0.68,dec_win:0.62,net_win:0.7,height:198,
-    stats:{ serve1pct:0.65,win1st:0.83,win2nd:0.57,returnWin:0.35,winners:43,errors:28,breakConvert:0.37,breakSave:0.66,serve_kmh:245,fh_kmh:160,bh_kmh:138,surface:{hard:1.05,clay:0.88,grass:1.10},
-      rally_short:48,rally_mid:32,rally_long:20,rest_kmh:140,data_type:'real'}},
-  { id:'cilic', name:'Marin Čilić', country:'CRO', countryFlag:'🇭🇷', era:'2005-present', style:'Serve & Baseline', prime:'2014-2018', gs:1,gs_ro:0,gs_wi:0,gs_us:1,gs_au:0,masters:2, peak:'No.3 (2017)',
-    bio:'US Open 2014. Saque y derecha de enorme potencia. Finalista Wimbledon 2017, Australian Open 2018.',
-    tb_win:0.62,dec_win:0.6,net_win:0.68,height:198,
-    stats:{ serve1pct:0.63,win1st:0.79,win2nd:0.55,returnWin:0.39,winners:43,errors:28,breakConvert:0.40,breakSave:0.65,serve_kmh:235,fh_kmh:162,bh_kmh:142,surface:{hard:1.04,clay:0.96,grass:1.04},
-      rally_short:45,rally_mid:32,rally_long:23,rest_kmh:145,data_type:'real'}},
-  { id:'monfils', name:'Gaël Monfils', country:'FRA', countryFlag:'🇫🇷', era:'2004-present', style:'All-court', prime:'2016-2022', gs:0,gs_ro:0,gs_wi:0,gs_us:0,gs_au:0,masters:1, peak:'No.6 (2016)',
-    bio:'El mejor atleta del tour. Sus defensas espectaculares son impresionantes. Semifinalista US Open 2016.',
-    tb_win:0.58,dec_win:0.62,net_win:0.64,height:193,
-    stats:{ serve1pct:0.61,win1st:0.74,win2nd:0.53,returnWin:0.44,winners:36,errors:28,breakConvert:0.44,breakSave:0.63,serve_kmh:215,fh_kmh:155,bh_kmh:145,surface:{hard:1.02,clay:1.00,grass:0.98},
-      rally_short:38,rally_mid:34,rally_long:28,rest_kmh:155,data_type:'real'}},
-  { id:'bautista', name:'Roberto Bautista', country:'ESP', countryFlag:'🇪🇸', era:'2008-present', style:'Baseliner', prime:'2019-2021', gs:0,gs_ro:0,gs_wi:0,gs_us:0,gs_au:0,masters:1, peak:'No.9 (2019)',
-    bio:'Gran consistencia y regularidad. Semifinalista Wimbledon 2019. El tenista más fiable de su generación.',
-    tb_win:0.58,dec_win:0.64,net_win:0.6,height:183,
-    stats:{ serve1pct:0.60,win1st:0.73,win2nd:0.53,returnWin:0.46,winners:30,errors:21,breakConvert:0.48,breakSave:0.66,serve_kmh:195,fh_kmh:143,bh_kmh:143,surface:{hard:1.00,clay:1.07,grass:0.96},
-      rally_short:37,rally_mid:35,rally_long:28,rest_kmh:150,data_type:'real'}},
-  { id:'garin', name:'Cristian Garín', country:'CHI', countryFlag:'🇨🇱', era:'2015-present', style:'Baseliner', prime:'2019-2021', gs:0,gs_ro:0,gs_wi:0,gs_us:0,gs_au:0,masters:0, peak:'No.17 (2021)',
-    bio:'El mejor chileno desde González. Especialista en tierra, fuerte físicamente. Representante de la escuela latinoamericana.',
-    tb_win:0.56,dec_win:0.6,net_win:0.58,height:185,
-    stats:{ serve1pct:0.59,win1st:0.72,win2nd:0.52,returnWin:0.45,winners:30,errors:24,breakConvert:0.46,breakSave:0.64,serve_kmh:198,fh_kmh:148,bh_kmh:143,surface:{hard:0.95,clay:1.10,grass:0.88},
-      rally_short:37,rally_mid:34,rally_long:29,rest_kmh:148,data_type:'real'}},
-  { id:'auger', name:'Félix Auger-Aliassime', country:'CAN', countryFlag:'🇨🇦', era:'2018-present', style:'All-court', prime:'2022-present', gs:0,gs_ro:0,gs_wi:0,gs_us:0,gs_au:0,masters:1, peak:'No.6 (2022)',
-    bio:'Saque potente, todo-terreno. Gran futuro. Cuatro finales ATP en 2022. Representante de la nueva guardia canadiense.',
-    tb_win:0.62,dec_win:0.62,net_win:0.66,height:190,
-    stats:{ serve1pct:0.63,win1st:0.78,win2nd:0.55,returnWin:0.42,winners:39,errors:26,breakConvert:0.42,breakSave:0.64,serve_kmh:230,fh_kmh:155,bh_kmh:150,surface:{hard:1.04,clay:0.98,grass:1.04},
-      rally_short:43,rally_mid:33,rally_long:24,rest_kmh:148,data_type:'real'}},
-  { id:'shapovalov', name:'Denis Shapovalov', country:'CAN', countryFlag:'🇨🇦', era:'2017-present', style:'All-court', prime:'2021-present', gs:0,gs_ro:0,gs_wi:0,gs_us:0,gs_au:0,masters:0, peak:'No.10 (2022)',
-    bio:'Backhand de una mano explosivo. Semifinalista Wimbledon 2021. Juego agresivo con mucho potencial.',
-    tb_win:0.58,dec_win:0.6,net_win:0.64,height:185,
-    stats:{ serve1pct:0.62,win1st:0.75,win2nd:0.54,returnWin:0.43,winners:40,errors:30,breakConvert:0.43,breakSave:0.62,serve_kmh:215,fh_kmh:158,bh_kmh:142,surface:{hard:1.02,clay:0.97,grass:1.04},
-      rally_short:41,rally_mid:34,rally_long:25,rest_kmh:148,data_type:'real'}},
-  { id:'khachanov', name:'Karen Khachanov', country:'RUS', countryFlag:'🇷🇺', era:'2012-present', style:'Baseliner', prime:'2018-present', gs:0,gs_ro:0,gs_wi:0,gs_us:0,gs_au:0,masters:1, peak:'No.8 (2019)',
-    bio:'Golpes poderosos, físico imponente. Finalista US Open 2022. Gran servicio.',
-    tb_win:0.6,dec_win:0.6,net_win:0.66,height:198,
-    stats:{ serve1pct:0.63,win1st:0.77,win2nd:0.55,returnWin:0.42,winners:40,errors:27,breakConvert:0.42,breakSave:0.63,serve_kmh:230,fh_kmh:162,bh_kmh:148,surface:{hard:1.04,clay:1.00,grass:0.98},
-      rally_short:42,rally_mid:33,rally_long:25,rest_kmh:148,data_type:'real'}},
-  { id:'humbert', name:'Ugo Humbert', country:'FRA', countryFlag:'🇫🇷', era:'2017-present', style:'All-court', prime:'2023-present', gs:0,gs_ro:0,gs_wi:0,gs_us:0,gs_au:0,masters:2, peak:'No.10 (2023)',
-    bio:'Zurdo con gran backhand. Juego variado y agresivo. Uno de los mejores jugadores franceses actuales.',
-    tb_win:0.6,dec_win:0.6,net_win:0.64,height:183,
-    stats:{ serve1pct:0.62,win1st:0.76,win2nd:0.55,returnWin:0.44,winners:38,errors:27,breakConvert:0.44,breakSave:0.64,serve_kmh:210,fh_kmh:150,bh_kmh:152,surface:{hard:1.02,clay:1.00,grass:1.02},
-      rally_short:40,rally_mid:34,rally_long:26,rest_kmh:150,data_type:'real'}},
-  { id:'musetti', name:'Lorenzo Musetti', country:'ITA', countryFlag:'🇮🇹', era:'2019-present', style:'All-court', prime:'2024-present', gs:0,gs_ro:0,gs_wi:0,gs_us:0,gs_au:0,masters:0, peak:'No.16 (2024)',
-    bio:'Backhand de una mano exquisito, dropshot devastador. Semifinalista Wimbledon 2024. Futuro del tenis italiano.',
-    tb_win:0.58,dec_win:0.58,net_win:0.66,height:185,
-    stats:{ serve1pct:0.61,win1st:0.74,win2nd:0.54,returnWin:0.43,winners:38,errors:27,breakConvert:0.44,breakSave:0.63,serve_kmh:205,fh_kmh:148,bh_kmh:132,surface:{hard:0.99,clay:1.05,grass:1.02},
-      rally_short:40,rally_mid:34,rally_long:26,rest_kmh:145,data_type:'real'}},
-  { id:'de_minaur', name:'Alex de Minaur', country:'AUS', countryFlag:'🇦🇺', era:'2017-present', style:'Baseliner', prime:'2023-present', gs:0,gs_ro:0,gs_wi:0,gs_us:0,gs_au:0,masters:2, peak:'No.9 (2024)',
-    bio:'El más rápido del tour actual. Defensa extraordinaria, mente competitiva. El nuevo Hewitt australiano.',
-    tb_win:0.58,dec_win:0.64,net_win:0.6,height:180,
-    stats:{ serve1pct:0.60,win1st:0.73,win2nd:0.53,returnWin:0.47,winners:28,errors:20,breakConvert:0.48,breakSave:0.67,serve_kmh:195,fh_kmh:145,bh_kmh:143,surface:{hard:1.02,clay:0.99,grass:1.04},
-      rally_short:36,rally_mid:35,rally_long:29,rest_kmh:158,data_type:'real'}},
-  { id:'tiafoe', name:"Frances Tiafoe", country:'USA', countryFlag:'🇺🇸', era:'2017-present', style:'All-court', prime:'2022-present', gs:0,gs_ro:0,gs_wi:0,gs_us:0,gs_au:0,masters:1, peak:'No.10 (2022)',
-    bio:'Big Foe. Derecha potente, espectacular. Semifinalista US Open 2022. Gran carisma y juego ofensivo.',
-    tb_win:0.6,dec_win:0.6,net_win:0.64,height:188,
-    stats:{ serve1pct:0.62,win1st:0.76,win2nd:0.54,returnWin:0.42,winners:40,errors:28,breakConvert:0.43,breakSave:0.62,serve_kmh:215,fh_kmh:163,bh_kmh:148,surface:{hard:1.04,clay:0.96,grass:1.02},
-      rally_short:42,rally_mid:33,rally_long:25,rest_kmh:150,data_type:'real'}},
-  { id:'paul', name:'Tommy Paul', country:'USA', countryFlag:'🇺🇸', era:'2018-present', style:'Baseliner', prime:'2023-present', gs:0,gs_ro:0,gs_wi:0,gs_us:0,gs_au:0,masters:0, peak:'No.12 (2024)',
-    bio:'Zurdo con gran backhand plano. Consistencia y potencia. Semifinalista Australian Open 2023.',
-    tb_win:0.6,dec_win:0.6,net_win:0.62,height:188,
-    stats:{ serve1pct:0.61,win1st:0.75,win2nd:0.54,returnWin:0.44,winners:36,errors:25,breakConvert:0.44,breakSave:0.64,serve_kmh:205,fh_kmh:152,bh_kmh:155,surface:{hard:1.03,clay:0.98,grass:1.00},
-      rally_short:39,rally_mid:34,rally_long:27,rest_kmh:150,data_type:'real'}},
-  { id:'draper', name:'Jack Draper', country:'GBR', countryFlag:'🇬🇧', era:'2021-present', style:'All-court', prime:'2024-present', gs:0,gs_ro:0,gs_wi:0,gs_us:0,gs_au:0,masters:0, peak:'No.15 (2024)',
-    bio:'El futuro del tenis británico. Zurdo potente con saque letal. Semifinalista US Open 2024.',
-    tb_win:0.6,dec_win:0.62,net_win:0.64,height:188,
-    stats:{ serve1pct:0.62,win1st:0.77,win2nd:0.55,returnWin:0.44,winners:40,errors:27,breakConvert:0.44,breakSave:0.63,serve_kmh:220,fh_kmh:158,bh_kmh:155,surface:{hard:1.04,clay:0.98,grass:1.04},
-      rally_short:41,rally_mid:33,rally_long:26,rest_kmh:148,data_type:'real'}},
-
-  // === AÑADIDOS HISTÓRICOS ===
-  { id:'leconte', name:'Henri Leconte', country:'FRA', countryFlag:'🇫🇷', era:'1980-1996', style:'All-court', prime:'1986-1988', gs:0,gs_ro:0,gs_wi:0,gs_us:0,gs_au:0,masters:2, peak:'No.5 (1986)',
-    bio:'El jugador más entretenido de los 80. Finalista Roland Garros 1988. Talento natural extraordinario.',
-    tb_win:0.58,dec_win:0.58,net_win:0.68,height:183,
-    stats:{ serve1pct:0.62,win1st:0.76,win2nd:0.55,returnWin:0.40,winners:42,errors:32,breakConvert:0.41,breakSave:0.62,serve_kmh:200,fh_kmh:150,bh_kmh:130,surface:{hard:0.98,clay:1.06,grass:1.00},
-      rally_short:41,rally_mid:33,rally_long:26,rest_kmh:142,data_type:'estimated'}},
-  { id:'forget', name:'Guy Forget', country:'FRA', countryFlag:'🇫🇷', era:'1982-1997', style:'Serve & Baseline', prime:'1990-1992', gs:0,gs_ro:0,gs_wi:0,gs_us:0,gs_au:0,masters:2, peak:'No.4 (1991)',
-    bio:'Gran zurdo con saque letal. Clave en la Copa Davis francesa de los 90. Top 5 en 1991.',
-    tb_win:0.6,dec_win:0.58,net_win:0.72,height:190,
-    stats:{ serve1pct:0.63,win1st:0.78,win2nd:0.55,returnWin:0.38,winners:40,errors:28,breakConvert:0.40,breakSave:0.65,serve_kmh:215,fh_kmh:148,bh_kmh:128,surface:{hard:1.00,clay:0.96,grass:1.06},
-      rally_short:46,rally_mid:31,rally_long:23,rest_kmh:135,data_type:'estimated'}},
-  { id:'muster', name:'Thomas Muster', country:'AUT', countryFlag:'🇦🇹', era:'1985-1999', style:'Baseliner', prime:'1995-1996', gs:1,gs_ro:1,gs_wi:0,gs_us:0,gs_au:0,masters:6, peak:'No.1 (1995)',
-    bio:'Roland Garros 1995. Nº1 del mundo. Ganó Roland Garros meses después de un gravísimo accidente de tráfico.',
-    tb_win:0.54,dec_win:0.62,net_win:0.52,height:183,
-    stats:{ serve1pct:0.59,win1st:0.71,win2nd:0.52,returnWin:0.46,winners:28,errors:21,breakConvert:0.48,breakSave:0.66,serve_kmh:182,fh_kmh:143,bh_kmh:138,surface:{hard:0.90,clay:1.18,grass:0.86},
-      rally_short:32,rally_mid:34,rally_long:34,rest_kmh:152,data_type:'estimated'}},
-  { id:'kafelnikov', name:'Yevgeny Kafelnikov', country:'RUS', countryFlag:'🇷🇺', era:'1992-2003', style:'All-court', prime:'1999-2000', gs:2,gs_ro:1,gs_wi:0,gs_us:0,gs_au:1,masters:7, peak:'No.1 (1999)',
-    bio:'Roland Garros 1996, Australian Open 1999. Nº1 del mundo. El primer tenista ruso en ganar un Grand Slam.',
-    tb_win:0.58,dec_win:0.62,net_win:0.6,height:183,
-    stats:{ serve1pct:0.61,win1st:0.74,win2nd:0.54,returnWin:0.44,winners:34,errors:25,breakConvert:0.46,breakSave:0.64,serve_kmh:200,fh_kmh:152,bh_kmh:148,surface:{hard:1.00,clay:1.06,grass:0.96},
-      rally_short:39,rally_mid:34,rally_long:27,rest_kmh:148,data_type:'estimated'}},
-  { id:'stich', name:'Michael Stich', country:'GER', countryFlag:'🇩🇪', era:'1987-1997', style:'Serve & Volley', prime:'1991-1994', gs:1,gs_ro:0,gs_wi:1,gs_us:0,gs_au:0,masters:4, peak:'No.2 (1993)',
-    bio:'Wimbledon 1991. Dobles Roland Garros. Saque devastador, impecable juego de red.',
-    tb_win:0.64,dec_win:0.62,net_win:0.76,height:190,
-    stats:{ serve1pct:0.63,win1st:0.80,win2nd:0.57,returnWin:0.35,winners:44,errors:28,breakConvert:0.38,breakSave:0.66,serve_kmh:225,fh_kmh:150,bh_kmh:128,surface:{hard:1.00,clay:0.92,grass:1.12},
-      rally_short:47,rally_mid:31,rally_long:22,rest_kmh:135,data_type:'estimated'}},
-  { id:'larsson', name:'Magnus Larsson', country:'SWE', countryFlag:'🇸🇪', era:'1989-2001', style:'Baseliner', prime:'1994-1997', gs:0,gs_ro:0,gs_wi:0,gs_us:0,gs_au:0,masters:0, peak:'No.10 (1995)',
-    bio:'Finalista Roland Garros 1994. Sólido en tierra batida. Representante del tenis sueco clásico.',
-    tb_win:0.54,dec_win:0.6,net_win:0.54,height:188,
-    stats:{ serve1pct:0.59,win1st:0.71,win2nd:0.52,returnWin:0.44,winners:27,errors:21,breakConvert:0.46,breakSave:0.65,serve_kmh:188,fh_kmh:142,bh_kmh:135,surface:{hard:0.94,clay:1.12,grass:0.90},
-      rally_short:35,rally_mid:34,rally_long:31,rest_kmh:148,data_type:'estimated'}},
-  { id:'enqvist', name:'Thomas Enqvist', country:'SWE', countryFlag:'🇸🇪', era:'1991-2005', style:'Baseliner', prime:'1996-1998', gs:0,gs_ro:0,gs_wi:0,gs_us:0,gs_au:0,masters:1, peak:'No.4 (1999)',
-    bio:'Golpes potentes, intimidante físicamente. Top 4 del mundo. Semifinalista Australian Open 1999.',
-    tb_win:0.6,dec_win:0.6,net_win:0.62,height:188,
-    stats:{ serve1pct:0.62,win1st:0.75,win2nd:0.54,returnWin:0.42,winners:36,errors:26,breakConvert:0.43,breakSave:0.64,serve_kmh:210,fh_kmh:152,bh_kmh:140,surface:{hard:1.00,clay:1.02,grass:0.96},
-      rally_short:41,rally_mid:33,rally_long:26,rest_kmh:142,data_type:'estimated'}},
-  { id:'chela', name:'Juan Ignacio Chela', country:'ARG', countryFlag:'🇦🇷', era:'1996-2014', style:'Baseliner', prime:'2005-2008', gs:0,gs_ro:0,gs_wi:0,gs_us:0,gs_au:0,masters:0, peak:'No.14 (2002)',
-    bio:'Especialista de tierra. Conocido por escupir sobre el pie de Djokovic. Más de 300 victorias en el tour.',
-    tb_win:0.54,dec_win:0.6,net_win:0.52,height:178,
-    stats:{ serve1pct:0.58,win1st:0.70,win2nd:0.51,returnWin:0.45,winners:27,errors:22,breakConvert:0.47,breakSave:0.64,serve_kmh:185,fh_kmh:140,bh_kmh:136,surface:{hard:0.92,clay:1.12,grass:0.86},
-      rally_short:34,rally_mid:34,rally_long:32,rest_kmh:148,data_type:'estimated'}},
-  { id:'hrbaty', name:'Dominik Hrbatý', country:'SVK', countryFlag:'🇸🇰', era:'1996-2010', style:'Baseliner', prime:'2002-2004', gs:0,gs_ro:0,gs_wi:0,gs_us:0,gs_au:0,masters:1, peak:'No.12 (2003)',
-    bio:'El tenista eslovaco más exitoso. Gran tierra batida. Top 15 del mundo durante varios años.',
-    tb_win:0.56,dec_win:0.6,net_win:0.56,height:183,
-    stats:{ serve1pct:0.60,win1st:0.72,win2nd:0.52,returnWin:0.44,winners:28,errors:22,breakConvert:0.46,breakSave:0.64,serve_kmh:195,fh_kmh:145,bh_kmh:138,surface:{hard:0.96,clay:1.08,grass:0.90},
-      rally_short:38,rally_mid:34,rally_long:28,rest_kmh:145,data_type:'estimated'}},
-  { id:'youzhny', name:'Mikhail Youzhny', country:'RUS', countryFlag:'🇷🇺', era:'1999-2015', style:'All-court', prime:'2006-2010', gs:0,gs_ro:0,gs_wi:0,gs_us:0,gs_au:0,masters:0, peak:'No.8 (2006)',
-    bio:'Uno-dos inimitable y revés liftado sorprendente. Más de 350 victorias ATP. Copa Davis con Rusia.',
-    tb_win:0.58,dec_win:0.6,net_win:0.58,height:183,
-    stats:{ serve1pct:0.60,win1st:0.73,win2nd:0.53,returnWin:0.43,winners:32,errors:24,breakConvert:0.44,breakSave:0.64,serve_kmh:195,fh_kmh:148,bh_kmh:142,surface:{hard:1.00,clay:1.02,grass:0.96},
-      rally_short:39,rally_mid:34,rally_long:27,rest_kmh:148,data_type:'estimated'}},
-  { id:'martin_del_potro', name:'Juan Martín del Potro', country:'ARG', countryFlag:'🇦🇷', era:'2007-2022', style:'Serve & Baseline', prime:'2009-2013', gs:1,gs_ro:0,gs_wi:0,gs_us:1,gs_au:0,masters:5, peak:'No.4 (2018)',
-    bio:'La derecha más poderosa de la historia del tenis. US Open 2009. Cuatro lesiones de muñeca truncaron una carrera que pudo ser legendaria.',
-    tb_win:0.62,dec_win:0.62,net_win:0.66,height:198,
-    stats:{ serve1pct:0.63,win1st:0.80,win2nd:0.56,returnWin:0.41,winners:50,errors:28,breakConvert:0.43,breakSave:0.64,serve_kmh:225,fh_kmh:175,bh_kmh:138,surface:{hard:1.07,clay:0.98,grass:1.04},
-      rally_short:43,rally_mid:33,rally_long:24,rest_kmh:148,data_type:'estimated'}},
-  { id:'chung', name:'Hyeon Chung', country:'KOR', countryFlag:'🇰🇷', era:'2013-present', style:'Baseliner', prime:'2018-2018', gs:0,gs_ro:0,gs_wi:0,gs_us:0,gs_au:0,masters:0, peak:'No.19 (2018)',
-    bio:'Semifinalista Australian Open 2018. Djokovic lo llamó su sucesor. Lesiones frenaron su carrera.',
-    tb_win:0.58,dec_win:0.62,net_win:0.58,height:183,
-    stats:{ serve1pct:0.59,win1st:0.72,win2nd:0.52,returnWin:0.46,winners:28,errors:21,breakConvert:0.47,breakSave:0.65,serve_kmh:192,fh_kmh:145,bh_kmh:145,surface:{hard:1.02,clay:1.04,grass:0.90},
-      rally_short:37,rally_mid:35,rally_long:28,rest_kmh:155,data_type:'real'}},
-  { id:'isner', name:'John Isner', country:'USA', countryFlag:'🇺🇸', era:'2007-2023', style:'Serve & Baseline', prime:'2012-2018', gs:0,gs_ro:0,gs_wi:0,gs_us:0,gs_au:0,masters:2, peak:'No.8 (2018)',
-    bio:'El partido más largo de la historia (70-68 en Wimbledon). Uno de los mejores servidores de todos los tiempos.',
-    tb_win:0.74,dec_win:0.62,net_win:0.72,height:208,
-    stats:{ serve1pct:0.65,win1st:0.85,win2nd:0.57,returnWin:0.30,winners:42,errors:26,breakConvert:0.32,breakSave:0.68,serve_kmh:248,fh_kmh:158,bh_kmh:133,surface:{hard:1.04,clay:0.84,grass:1.12},
-      rally_short:52,rally_mid:29,rally_long:19,rest_kmh:130,data_type:'real'}},
-  { id:'kyrgios', name:'Nick Kyrgios', country:'AUS', countryFlag:'🇦🇺', era:'2013-present', style:'All-court', prime:'2022-2023', gs:0,gs_ro:0,gs_wi:0,gs_us:0,gs_au:0,masters:1, peak:'No.13 (2022)',
-    bio:'El más polémico del tour. Finalista Wimbledon 2022. Talento bruto sin igual. Saque-volea, un juego único en el tenis moderno.',
-    tb_win:0.64,dec_win:0.58,net_win:0.72,height:193,
-    stats:{ serve1pct:0.64,win1st:0.82,win2nd:0.57,returnWin:0.38,winners:48,errors:35,breakConvert:0.39,breakSave:0.64,serve_kmh:240,fh_kmh:165,bh_kmh:142,surface:{hard:1.05,clay:0.90,grass:1.12},
-      rally_short:46,rally_mid:31,rally_long:23,rest_kmh:145,data_type:'real'}},
-  { id:'baghdatis', name:'Marcos Baghdatis', country:'CYP', countryFlag:'🇨🇾', era:'2004-2017', style:'All-court', prime:'2006-2009', gs:0,gs_ro:0,gs_wi:0,gs_us:0,gs_au:0,masters:0, peak:'No.8 (2006)',
-    bio:'Finalista Australian Open 2006. Derecha explosiva y gran carisma. Uno de los mejores jugadores de aquel torneo.',
-    tb_win:0.58,dec_win:0.58,net_win:0.64,height:183,
-    stats:{ serve1pct:0.62,win1st:0.75,win2nd:0.54,returnWin:0.43,winners:38,errors:28,breakConvert:0.43,breakSave:0.63,serve_kmh:210,fh_kmh:155,bh_kmh:145,surface:{hard:1.02,clay:0.97,grass:1.00},
-      rally_short:41,rally_mid:33,rally_long:26,rest_kmh:148,data_type:'estimated'}},
-];
-
-
-// ===== PAGE NAVIGATION =====
-function showPage(page) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('page-' + page).classList.add('active');
-  document.querySelectorAll('.nav-tab').forEach(t => {
-    if (t.textContent.toLowerCase().includes(page === 'simulator' ? 'simulad' : 'estad')) t.classList.add('active');
-  });
-  if (page === 'stats') initStats();
-}
-
-// ===== SIMULATOR =====
-let sel = { p1: null, p2: null };
-let config = { surface: 'hard', sets: 5, tb: true };
-
-function renderGrid(gridId, playerKey, filter) {
-  const grid = document.getElementById(gridId);
-  const filtered = filter
-    ? PLAYERS.filter(p => p.name.toLowerCase().includes(filter.toLowerCase()) || p.country.toLowerCase().includes(filter.toLowerCase()))
-    : PLAYERS;
-  grid.innerHTML = '';
-  filtered.forEach(p => {
-    const card = document.createElement('div');
-    card.className = 'player-card';
-    if (sel[playerKey]?.id === p.id) card.classList.add('selected-' + playerKey);
-    card.innerHTML = `
-      <div class="player-name">${p.countryFlag} ${p.name}</div>
-      <div class="player-meta"><span>${p.era}</span><span>${p.style}</span></div>
-      <div class="player-stat-mini">
-        <div class="stat-pill">1ºsrv <span>${Math.round(p.stats.serve1pct*100)}%</span></div>
-        <div class="stat-pill">W <span>${p.stats.winners}</span></div>
-        <div class="stat-pill">Ret <span>${Math.round(p.stats.returnWin*100)}%</span></div>
-        ${p.gs > 0 ? `<div class="stat-pill">GS <span>${p.gs}</span></div>` : ''}
-      </div>
-    `;
-    card.onclick = () => selectPlayer(p, playerKey);
-    grid.appendChild(card);
-  });
-}
-
-function filterGrid(key, val) {
-  renderGrid('grid-' + key, key, val);
-}
-
-function selectPlayer(p, key) {
-  sel[key] = p;
-  renderGrid('grid-p1', 'p1', document.getElementById('search-p1').value);
-  renderGrid('grid-p2', 'p2', document.getElementById('search-p2').value);
-  document.getElementById('sel-p1').textContent = sel.p1 ? sel.p1.name : '— Selecciona P1 —';
-  document.getElementById('sel-p2').textContent = sel.p2 ? sel.p2.name : '— Selecciona P2 —';
-  document.getElementById('sim-btn').disabled = !(sel.p1 && sel.p2 && sel.p1.id !== sel.p2.id);
-}
-
-document.querySelectorAll('#surface-opts .opt-btn').forEach(btn => {
-  btn.onclick = () => { document.querySelectorAll('#surface-opts .opt-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); config.surface = btn.dataset.val; };
-});
-document.querySelectorAll('#sets-opts .opt-btn').forEach(btn => {
-  btn.onclick = () => { document.querySelectorAll('#sets-opts .opt-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); config.sets = parseInt(btn.dataset.val); };
-});
-document.querySelectorAll('#tb-opts .opt-btn').forEach(btn => {
-  btn.onclick = () => { document.querySelectorAll('#tb-opts .opt-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); config.tb = btn.dataset.val === 'yes'; };
-});
-
-// ===== SIMULATION ENGINE =====
-function calcWinProbServe(server, returner, surface) {
-  const sS = server.stats, rS = returner.stats;
-  const sMod = server.stats.surface[surface];
-  const rMod = returner.stats.surface[surface];
-
-  // Base serve probability from historical stats
-  const baseServe = sS.serve1pct * sS.win1st + (1 - sS.serve1pct) * sS.win2nd;
-
-  // Serve speed bonus: up to +3% (175 km/h = base, 250 km/h = max)
-  const serveSpeedBonus = ((sS.serve_kmh || 205) - 175) / 75 * 0.03;
-
-  // Groundstroke power impact (avg fh+bh speed)
-  const serverPower = (((sS.fh_kmh||148) + (sS.bh_kmh||138)) / 2 - 120) / 55 * 0.02;
-
-  // Rally profile: server with high short-rally % benefits more on serve
-  // (more aces, clean winners before rallies start)
-  const serverShortRallyBonus = ((sS.rally_short||40) - 38) / 100 * 0.015;
-
-  // Returner's return speed: faster returns = harder to hold serve
-  // Normalized: 125 km/h = weak, 165 km/h = elite
-  const returnSpeedFactor = ((rS.rest_kmh||148) - 125) / 40 * 0.02;
-
-  // Returner effectiveness (their stats + return speed + surface)
-  const returnPressure = rS.returnWin * rMod * (1 - serverPower * 0.3) + returnSpeedFactor * 0.5;
-
-  // Net game: players who win more net points hold serve better
-  const netBonus = ((server.net_win||0.65) - 0.65) * 0.04;
-
-  const prob = (baseServe * sMod) + serveSpeedBonus + serverPower * 0.5
-               + serverShortRallyBonus + netBonus - (returnPressure * 0.15);
-  return clamp(prob, 0.40, 0.75);
-}
-
-// Returns rally-length weighted point prob when rally extends past serve
-// Used to simulate full point dynamics in extended exchanges
-function getRallyProfile(p1, p2, surface) {
-  const s1 = p1.stats, s2 = p2.stats;
-  // Blend both players' rally tendencies
-  const shortPct = ((s1.rally_short||40) + (s2.rally_short||40)) / 2;
-  const midPct   = ((s1.rally_mid||34)   + (s2.rally_mid||34))   / 2;
-  const longPct  = ((s1.rally_long||26)  + (s2.rally_long||26))  / 2;
-  // Surface adjustments: clay = longer rallies, grass = shorter
-  const surfMod = surface === 'clay' ? 1.18 : surface === 'grass' ? 0.82 : 1.0;
-  const adjLong  = longPct * surfMod;
-  const adjShort = shortPct / surfMod;
-  const total = adjShort + midPct + adjLong;
-  return {
-    short: adjShort / total,
-    mid:   midPct  / total,
-    long:  adjLong / total
-  };
-}
-
-function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
-function simPoint(pS) { return Math.random() < pS; }
-function scoreToStr(pts) {
-  const map = [0,15,30,40];
-  if (pts[0] < 3 || pts[1] < 3) return `${map[pts[0]]}-${map[pts[1]]}`;
-  if (pts[0] === pts[1]) return 'Deuce';
-  return pts[0] > pts[1] ? 'Ventaja srv' : 'Ventaja rst';
-}
-function simGame(pWin, rallyProf, sStats, rStats) {
-  let pts = [0,0];
-  while (true) {
-    // Determine rally length for this point
-    let pointPWin = pWin;
-    if (rallyProf) {
-      const r = Math.random();
-      if (r < rallyProf.short) {
-        // Short point (0-4 shots): server advantage if high short-rally %
-        // Good returners (high rest_kmh) reduce server's short-rally edge
-        const returnSpeedAdj = ((rStats.rest_kmh||148) - 148) / 40 * 0.04;
-        pointPWin = clamp(pWin + 0.04 - returnSpeedAdj, 0.38, 0.80);
-      } else if (r < rallyProf.short + rallyProf.mid) {
-        // Medium rally (5-8 shots): balanced, slight serve edge fades
-        pointPWin = clamp(pWin - 0.01, 0.38, 0.75);
-      } else {
-        // Long rally (9+ shots): returner/defender advantage
-        // Player with more long-rally % and higher groundstroke speed wins more
-        const longRallySkill = ((rStats.rally_long||26) - 26) / 34 * 0.06;
-        const groundAdv = (((rStats.fh_kmh||148)+(rStats.bh_kmh||138))/2 - 143) / 35 * 0.03;
-        pointPWin = clamp(pWin - 0.06 - longRallySkill - groundAdv, 0.30, 0.70);
-      }
+  function ensureInitialized() {
+    if (typeof PLAYERS === 'undefined' ||  typeof initializeUI === 'undefined' || typeof RESULTS_DB === 'undefined') {
+      console.log('[TL] Waiting for scripts to load...');
+      setTimeout(ensureInitialized, 100);
+      return;
     }
-    if (simPoint(pointPWin)) pts[0]++; else pts[1]++;
-    if (pts[0] >= 4 && pts[0]-pts[1] >= 2) return {winner:0};
-    if (pts[1] >= 4 && pts[1]-pts[0] >= 2) return {winner:1};
-  }
-}
-function simTiebreak(pWin, server, returner) {
-  let pts = [0,0];
-  while (true) {
-    // Tiebreak: blend base prob with each player's historical tb_win%
-    // server's tb_win raises their chance, returner's tb_win lowers it
-    const serverTBSkill  = ((server  && server.tb_win  || 0.62) - 0.62) * 0.08;
-    const returnerTBSkill= ((returner && returner.tb_win || 0.62) - 0.62) * 0.08;
-    const tbPWin = clamp(pWin + 0.02 + serverTBSkill - returnerTBSkill, 0.38, 0.80);
-    if (simPoint(tbPWin)) pts[0]++; else pts[1]++;
-    if (pts[0] >= 7 && pts[0]-pts[1] >= 2) return 0;
-    if (pts[1] >= 7 && pts[1]-pts[0] >= 2) return 1;
-  }
-}
-function simSet(p1, p2, surface, isFinal, useTb, firstServer) {
-  let games = [0,0], gameCount = 0, gameLog = [];
-  let rallyStats = {short:0, mid:0, long:0};
-  const rallyProf = getRallyProfile(p1, p2, surface);
-  // Deciding set: players with high dec_win% get a small mental-edge bonus
-  const p1DecBonus = isFinal ? ((p1.dec_win||0.64) - 0.64) * 0.03 : 0;
-  const p2DecBonus = isFinal ? ((p2.dec_win||0.64) - 0.64) * 0.03 : 0;
-  while (true) {
-    const serving = (firstServer + gameCount) % 2;
-    const server = serving===0 ? p1 : p2, returner = serving===0 ? p2 : p1;
-    const basePSrv = calcWinProbServe(server, returner, surface);
-    const decBonus = serving === 0 ? p1DecBonus - p2DecBonus : p2DecBonus - p1DecBonus;
-    const pSrv = clamp(basePSrv + (isFinal ? decBonus : 0), 0.38, 0.78);
-    if (games[0]===6 && games[1]===6) {
-      if (!useTb && isFinal) {
-        const g = simGame(pSrv);
-        const gw = g.winner===0 ? serving : 1-serving;
-        games[gw]++; gameCount++;
-        if (Math.abs(games[0]-games[1])>=2) { gameLog.push(`${games[0]}-${games[1]}`); return {games, winner:games[0]>games[1]?0:1, gamesPlayed:gameCount, rallyStats}; }
-      } else {
-        const tbW = simTiebreak(pSrv);
-        const aw = tbW===0 ? serving : 1-serving;
-        games[aw]++; gameLog.push('TB');
-        return {games, winner:games[0]>games[1]?0:1, gamesPlayed:gameCount+1, rallyStats};
-      }
+    console.log('[TL] All scripts loaded, calling initializeUI');
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initializeUI);
     } else {
-      const g = simGame(pSrv, rallyProf, server.stats, returner.stats);
-      const gw = g.winner===0 ? serving : 1-serving;
-      games[gw]++; gameCount++; gameLog.push(`${games[0]}-${games[1]}`);
-      if ((games[0]>=6||games[1]>=6) && Math.abs(games[0]-games[1])>=2)
-        return {games, winner:games[0]>games[1]?0:1, gamesPlayed:gameCount, rallyStats};
+      initializeUI();
     }
   }
-}
-
-function simulate() {
-  if (!sel.p1 || !sel.p2) return;
-  const p1=sel.p1, p2=sel.p2, surface=config.surface, maxSets=config.sets, toWin=Math.ceil(maxSets/2);
-  const setsP1=[], setsP2=[];
-  let winsP1=0, winsP2=0, matchLog=[];
-  let firstServerOfMatch = Math.floor(Math.random()*2), totalGamesPlayed=0;
-  let stats = {aces:[0,0],doubleFaults:[0,0],winners:[0,0],errors:[0,0],breakPoints:[0,0],breakConverted:[0,0],totalGames:[0,0],
-    rallyShort:[0,0],rallyMid:[0,0],rallyLong:[0,0]};
-
-  while (winsP1<toWin && winsP2<toWin) {
-    const setNum=setsP1.length+1, isFinal=(setNum===maxSets);
-    const setFS = (firstServerOfMatch+totalGamesPlayed)%2;
-    const set = simSet(p1,p2,surface,isFinal,config.tb,setFS);
-    totalGamesPlayed += set.gamesPlayed||(set.games[0]+set.games[1]);
-    setsP1.push(set.games[0]); setsP2.push(set.games[1]);
-    stats.totalGames[0]+=set.games[0]; stats.totalGames[1]+=set.games[1];
-    if (set.winner===0) { winsP1++; matchLog.push({text:`📗 Set ${setNum}: ${p1.name} gana ${set.games[0]}-${set.games[1]}`,type:'p1'}); }
-    else { winsP2++; matchLog.push({text:`📘 Set ${setNum}: ${p2.name} gana ${set.games[0]}-${set.games[1]}`,type:'p2'}); }
-    // Accumulate rally distribution stats for this set
-    const totalGamesThisSet = set.games[0] + set.games[1];
-    const prof = getRallyProfile(p1, p2, surface);
-    // Each game ~5-7 points, estimate points won by each player from rally type
-    const estPoints = totalGamesThisSet * 6;
-    const shortPts = Math.round(estPoints * prof.short);
-    const midPts   = Math.round(estPoints * prof.mid);
-    const longPts  = Math.round(estPoints * prof.long);
-    // Server wins more short points, returner wins more long points
-    const p1ServeRatio = p1.stats.rally_short / (p1.stats.rally_short + p2.stats.rally_short + 0.001);
-    stats.rallyShort[0] += Math.round(shortPts * (p1ServeRatio * 0.6 + 0.2));
-    stats.rallyShort[1] += shortPts - Math.round(shortPts * (p1ServeRatio * 0.6 + 0.2));
-    const p1LongRatio = p1.stats.rally_long / (p1.stats.rally_long + p2.stats.rally_long + 0.001);
-    stats.rallyLong[1] += Math.round(longPts * (p1LongRatio * 0.4 + 0.3));
-    stats.rallyLong[0] += longPts - Math.round(longPts * (p1LongRatio * 0.4 + 0.3));
-    stats.rallyMid[0]  += Math.round(midPts * 0.5);
-    stats.rallyMid[1]  += midPts - Math.round(midPts * 0.5);
-
-    stats.aces[0]+=Math.round(4+Math.random()*8*p1.stats.serve1pct*p1.stats.surface[surface]);
-    stats.aces[1]+=Math.round(4+Math.random()*8*p2.stats.serve1pct*p2.stats.surface[surface]);
-    stats.doubleFaults[0]+=Math.round(1+Math.random()*4); stats.doubleFaults[1]+=Math.round(1+Math.random()*4);
-    stats.winners[0]+=Math.round(p1.stats.winners*(0.8+Math.random()*0.4)*p1.stats.surface[surface]);
-    stats.winners[1]+=Math.round(p2.stats.winners*(0.8+Math.random()*0.4)*p2.stats.surface[surface]);
-    stats.errors[0]+=Math.round(p1.stats.errors*(0.8+Math.random()*0.4));
-    stats.errors[1]+=Math.round(p2.stats.errors*(0.8+Math.random()*0.4));
-    const bpP1=Math.round(Math.random()*6+2), bpP2=Math.round(Math.random()*6+2);
-    stats.breakPoints[0]+=bpP1; stats.breakPoints[1]+=bpP2;
-    stats.breakConverted[0]+=Math.round(bpP1*p1.stats.breakConvert*(0.7+Math.random()*0.6));
-    stats.breakConverted[1]+=Math.round(bpP2*p2.stats.breakConvert*(0.7+Math.random()*0.6));
-  }
-  const winner = winsP1>=toWin ? p1 : p2;
-  const scoreStr = setsP1.map((g,i)=>`${g}-${setsP2[i]}`).join(' ');
-  renderResult(p1,p2,setsP1,setsP2,winner,scoreStr,stats,matchLog,maxSets);
-}
-
-function renderResult(p1,p2,setsP1,setsP2,winner,scoreStr,stats,matchLog,maxSets) {
-  document.getElementById('sb-name-p1').textContent=p1.name;
-  document.getElementById('sb-name-p2').textContent=p2.name;
-  for (let i=1;i<=5;i++) {
-    const e1=document.getElementById(`s${i}p1`), e2=document.getElementById(`s${i}p2`);
-    if (i<=setsP1.length) {
-      e1.textContent=setsP1[i-1]; e2.textContent=setsP2[i-1];
-      e1.className='set-score'; e2.className='set-score';
-      if (setsP1[i-1]>setsP2[i-1]) e1.classList.add('winner'); else e2.classList.add('p2-win');
-    } else { e1.textContent='-'; e2.textContent='-'; e1.className='set-score inactive'; e2.className='set-score inactive'; }
-  }
-  document.getElementById('tot-p1').textContent=setsP1.reduce((a,b)=>a+b,0);
-  document.getElementById('tot-p2').textContent=setsP2.reduce((a,b)=>a+b,0);
-  document.getElementById('winner-name').textContent=winner.name;
-  document.getElementById('winner-name').style.color=winner.id===sel.p1.id?'var(--accent)':'var(--accent2)';
-  document.getElementById('winner-score').textContent=scoreStr;
-  const sg=document.getElementById('stats-grid'); sg.innerHTML='';
-  [['Aces',stats.aces[0],stats.aces[1]],
-   ['Dobles faltas',stats.doubleFaults[0],stats.doubleFaults[1]],
-   ['Winners',stats.winners[0],stats.winners[1]],
-   ['Errores no forzados',stats.errors[0],stats.errors[1]],
-   ['Break pts conv.',`${stats.breakConverted[0]}/${stats.breakPoints[0]}`,`${stats.breakConverted[1]}/${stats.breakPoints[1]}`],
-   ['Juegos ganados',stats.totalGames[0],stats.totalGames[1]],
-   ['— Puntos 0-4 golpes',stats.rallyShort[0],stats.rallyShort[1]],
-   ['— Puntos 5-8 golpes',stats.rallyMid[0],stats.rallyMid[1]],
-   ['— Puntos 9+ golpes',stats.rallyLong[0],stats.rallyLong[1]],
-  ].forEach(([name,v1,v2])=>{
-    const n1=parseFloat(v1),n2=parseFloat(v2),total=n1+n2||1;
-    const pct1=(n1/total*100).toFixed(0), pct2=(n2/total*100).toFixed(0);
-    sg.innerHTML+=`<div class="stat-val-left">${v1}</div><div class="stat-name">${name}</div><div class="stat-val-right">${v2}</div>
-    <div><div class="bar-wrap"><div class="bar-fill-left" style="width:${pct1}%"></div></div></div><div></div>
-    <div><div class="bar-wrap"><div class="bar-fill-right" style="width:${pct2}%"></div></div></div>`;
+  
+  // Start check immediately
+  ensureInitialized();
+  
+  // Also ensure on window load
+  window.addEventListener('load', () => {
+    console.log('[TL] Window.load event, checking if need to re-init...');
+    setTimeout(() => {
+      if (document.getElementById('grid-p1')?.children.length === 0) {
+        console.log('[TL] Grids empty, re-initializing...');
+        if (typeof initializeUI === 'function') {
+          initializeUI();
+        }
+      }
+    }, 200);
   });
-  const logEl=document.getElementById('point-log');
-  logEl.innerHTML=matchLog.map(e=>`<div class="log-entry ${e.type==='p1'?'important':'p2w'}">${e.text}</div>`).join('');
-  ['scoreboard','match-stats','point-log','winner-banner','again-wrap'].forEach(id=>{
-    const el=document.getElementById(id);
-    el.style.display='block'; el.classList.add('animate-in');
-  });
-  setTimeout(()=>document.getElementById('winner-banner').scrollIntoView({behavior:'smooth',block:'start'}),100);
-}
-
-function resetSim() {
-  ['scoreboard','match-stats','point-log','winner-banner','again-wrap'].forEach(id=>document.getElementById(id).style.display='none');
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-
-document.getElementById('sim-btn').onclick = simulate;
-
-// ===== STATS PAGE =====
-let statsInitialized = false;
-let currentEraFilter = 'all';
-let currentSearchFilter = '';
-
-function getEra(player) {
-  const start = parseInt(player.era.split('-')[0]);
-  if (start >= 2010) return '2010s';
-  if (start >= 2000) return '2000s';
-  if (start >= 1990) return '90s';
-  if (start >= 1980) return '80s';
-  return '70s';
-}
-
-function initStats() {
-  if (statsInitialized) return;
-  statsInitialized = true;
-  document.getElementById('player-count').textContent = PLAYERS.length;
-  document.querySelectorAll('#era-filter .era-btn').forEach(btn => {
-    btn.onclick = () => {
-      document.querySelectorAll('#era-filter .era-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      currentEraFilter = btn.dataset.era;
-      renderSidebar();
-    };
-  });
-  renderSidebar();
-}
-
-function renderSidebar() {
-  const list = document.getElementById('players-list');
-  const filtered = PLAYERS.filter(p => {
-    const matchSearch = !currentSearchFilter || p.name.toLowerCase().includes(currentSearchFilter.toLowerCase()) || p.country.toLowerCase().includes(currentSearchFilter.toLowerCase());
-    const matchEra = currentEraFilter === 'all' || getEra(p) === currentEraFilter;
-    return matchSearch && matchEra;
-  }).sort((a,b) => (b.gs||0) - (a.gs||0) || a.name.localeCompare(b.name));
-
-  list.innerHTML = filtered.map(p => `
-    <div class="player-list-item" id="pli-${p.id}" onclick="showPlayerDetail('${p.id}')">
-      <span class="pli-flag">${p.countryFlag}</span>
-      <div class="pli-info">
-        <div class="pli-name">${p.name}</div>
-        <div class="pli-sub">${p.country} · ${p.prime} · ${p.style}</div>
-      </div>
-      <div class="pli-titles">
-        ${(p.gs||0)>0 ? `<div class="pli-gs">🏆${p.gs}</div>` : ''}
-        ${(p.masters||0)>0 ? `<div class="pli-masters">💎${p.masters}</div>` : ''}
-      </div>
-    </div>
-  `).join('');
-}
-
-function filterSidebar(val) {
-  currentSearchFilter = val;
-  renderSidebar();
-}
-
-function showPlayerDetail(playerId) {
-  const p = PLAYERS.find(x => x.id === playerId);
-  if (!p) return;
-
-  document.querySelectorAll('.player-list-item').forEach(el => el.classList.remove('active'));
-  const item = document.getElementById('pli-' + playerId);
-  if (item) { item.classList.add('active'); item.scrollIntoView({behavior:'smooth',block:'nearest'}); }
-
-  document.getElementById('detail-empty').style.display = 'none';
-  document.getElementById('detail-content').style.display = 'block';
-
-  const s = p.stats;
-  const initials = p.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-
-  // Surface modifiers → bar widths (base is 1.00 = 50%, max ~1.18 = ~90%)
-  const surfaceToBar = (val) => Math.round(((val - 0.82) / (1.20 - 0.82)) * 100);
-  const surfaceClass = (val) => val >= 1.08 ? 'good' : val >= 0.96 ? 'avg' : 'weak';
-  const surfaceLabel = (val) => (val >= 1.0 ? '+' : '') + ((val - 1) * 100).toFixed(0) + '%';
-
-  // Stat bar widths relative to typical ranges
-  const barW = (val, min, max) => Math.round(((val - min) / (max - min)) * 100);
-
-  document.getElementById('detail-content').innerHTML = `
-    <div class="player-hero">
-      <div class="player-avatar">
-        <div class="player-avatar-initial">${initials}</div>
-        <div class="player-flag-bg">${p.countryFlag}</div>
-        <div class="player-avatar-accent"></div>
-      </div>
-      <div class="player-hero-info">
-        <div class="player-hero-name">${p.name}</div>
-        <div class="player-hero-country">${p.countryFlag} ${p.country} · ${p.era} · ${p.height ? p.height+"cm" : ""}</div>
-        <div class="player-hero-badges">
-          <span class="badge highlight">Prime: ${p.prime}</span>
-          <span class="badge">${p.style}</span>
-          <span class="badge">${p.peak}</span>
-        </div>
-
-        <!-- GRAND SLAM ICONS -->
-        <div class="gs-trophy-section">
-          <div class="gs-trophy-row">
-            <div class="gs-trophy-item ${(p.gs_ro||0)>0?'gs-won':'gs-zero'}">
-              <div class="gs-icon">🟠</div>
-              <div class="gs-name">Roland Garros</div>
-              <div class="gs-count">${p.gs_ro||0}</div>
-              ${ (p.gs_ro||0) > 0 ? `<div class="gs-dots">${'●'.repeat(Math.min(p.gs_ro,14))}</div>` : '<div class="gs-dots-empty">○</div>' }
-            </div>
-            <div class="gs-trophy-item ${(p.gs_wi||0)>0?'gs-won':'gs-zero'}">
-              <div class="gs-icon">🟢</div>
-              <div class="gs-name">Wimbledon</div>
-              <div class="gs-count">${p.gs_wi||0}</div>
-              ${ (p.gs_wi||0) > 0 ? `<div class="gs-dots">${'●'.repeat(Math.min(p.gs_wi,8))}</div>` : '<div class="gs-dots-empty">○</div>' }
-            </div>
-            <div class="gs-trophy-item ${(p.gs_us||0)>0?'gs-won':'gs-zero'}">
-              <div class="gs-icon">🔵</div>
-              <div class="gs-name">US Open</div>
-              <div class="gs-count">${p.gs_us||0}</div>
-              ${ (p.gs_us||0) > 0 ? `<div class="gs-dots">${'●'.repeat(Math.min(p.gs_us,5))}</div>` : '<div class="gs-dots-empty">○</div>' }
-            </div>
-            <div class="gs-trophy-item ${(p.gs_au||0)>0?'gs-won':'gs-zero'}">
-              <div class="gs-icon">🟡</div>
-              <div class="gs-name">Australian Open</div>
-              <div class="gs-count">${p.gs_au||0}</div>
-              ${ (p.gs_au||0) > 0 ? `<div class="gs-dots">${'●'.repeat(Math.min(p.gs_au,11))}</div>` : '<div class="gs-dots-empty">○</div>' }
-            </div>
-          </div>
-          <div class="gs-totals-row">
-            <div class="gs-total-item">
-              <span class="gs-total-label">🏆 Total Grand Slams</span>
-              <span class="gs-total-val">${p.gs||0}</span>
-            </div>
-            <div class="gs-total-item">
-              <span class="gs-total-label">💎 Masters 1000 / equiv.</span>
-              <span class="gs-total-val masters-val">${p.masters||0}</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="player-bio">${p.bio || ''}</div>
-        <div class="peak-stat">
-          <div class="peak-item"><div class="peak-label">1er Servicio</div><div class="peak-value">${Math.round(s.serve1pct*100)}%</div></div>
-          <div class="peak-item"><div class="peak-label">Winners / partido</div><div class="peak-value">${s.winners}</div></div>
-          <div class="peak-item"><div class="peak-label">% Devolución ganada</div><div class="peak-value">${Math.round(s.returnWin*100)}%</div></div>
-          <div class="peak-item"><div class="peak-label">Conv. Break pts</div><div class="peak-value">${Math.round(s.breakConvert*100)}%</div></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="sim-stats-section">
-      <div class="section-label">Parámetros de simulación</div>
-
-      <div class="section-label" style="margin-bottom:1rem">Velocidades de golpeo</div>
-      <div class="speed-cards">
-        <div class="speed-card">
-          <div class="speed-icon">🎯</div>
-          <div class="speed-label">Saque máx.</div>
-          <div class="speed-value">${s.serve_kmh||'—'}</div>
-          <div class="speed-unit">km/h</div>
-          <div class="speed-bar-track"><div class="speed-bar" style="width:${Math.round(((s.serve_kmh||200)-170)/80*100)}%;background:#c8f000"></div></div>
-        </div>
-        <div class="speed-card">
-          <div class="speed-icon">👊</div>
-          <div class="speed-label">Derecha media</div>
-          <div class="speed-value">${s.fh_kmh||'—'}</div>
-          <div class="speed-unit">km/h</div>
-          <div class="speed-bar-track"><div class="speed-bar" style="width:${Math.round(((s.fh_kmh||145)-118)/60*100)}%;background:#00e5ff"></div></div>
-        </div>
-        <div class="speed-card">
-          <div class="speed-icon">🔄</div>
-          <div class="speed-label">Revés medio</div>
-          <div class="speed-value">${s.bh_kmh||'—'}</div>
-          <div class="speed-unit">km/h</div>
-          <div class="speed-bar-track"><div class="speed-bar" style="width:${Math.round(((s.bh_kmh||138)-115)/55*100)}%;background:#ff9800"></div></div>
-        </div>
-        <div class="speed-card">
-          <div class="speed-icon">🏓</div>
-          <div class="speed-label">Resto punta</div>
-          <div class="speed-value">${s.rest_kmh||'—'}</div>
-          <div class="speed-unit">km/h</div>
-          <div class="speed-bar-track"><div class="speed-bar" style="width:${Math.round(((s.rest_kmh||148)-125)/45*100)}%;background:#a855f7"></div></div>
-        </div>
-        <div class="speed-card combo">
-          <div class="speed-icon">⚡</div>
-          <div class="speed-label">Potencia total</div>
-          <div class="speed-value">${Math.round(((s.serve_kmh||200)+(s.fh_kmh||145)+(s.bh_kmh||138)+(s.rest_kmh||148))/4)}</div>
-          <div class="speed-unit">km/h media de todos los golpes</div>
-          <div class="speed-bar-track"><div class="speed-bar" style="width:${Math.round((((s.serve_kmh||200)+(s.fh_kmh||145)+(s.bh_kmh||138)+(s.rest_kmh||148))/4-138)/50*100)}%;background:linear-gradient(90deg,#c8f000,#a855f7)"></div></div>
-        </div>
-      </div>
-      <br>
-      <div class="section-label" style="margin-bottom:1rem">Estadísticas de simulación</div>
-      <div class="stat-cards">
-        <div class="stat-card highlight">
-          <div class="stat-card-label">% 1er Servicio</div>
-          <div class="stat-card-value" style="color:var(--accent)">${Math.round(s.serve1pct*100)}%</div>
-          <div class="stat-card-sub">Entran en zona</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-card-label">% pts ganados con 1º</div>
-          <div class="stat-card-value">${Math.round(s.win1st*100)}%</div>
-          <div class="stat-card-sub">Cuando entra el 1er srv</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-card-label">% pts ganados con 2º</div>
-          <div class="stat-card-value">${Math.round(s.win2nd*100)}%</div>
-          <div class="stat-card-sub">Cuando falla el 1er srv</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-card-label">% pts ganados devol.</div>
-          <div class="stat-card-value">${Math.round(s.returnWin*100)}%</div>
-          <div class="stat-card-sub">Presión al rival</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-card-label">Winners por partido</div>
-          <div class="stat-card-value">${s.winners}</div>
-          <div class="stat-card-sub">Media en su prime</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-card-label">Errores no forzados</div>
-          <div class="stat-card-value">${s.errors}</div>
-          <div class="stat-card-sub">Media por partido</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-card-label">Conv. Break Points</div>
-          <div class="stat-card-value">${Math.round(s.breakConvert*100)}%</div>
-          <div class="stat-card-sub">Cuando tiene oportunidad</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-card-label">Salvados Break Points</div>
-          <div class="stat-card-value">${Math.round(s.breakSave*100)}%</div>
-          <div class="stat-card-sub">Cuando le atacan</div>
-        </div>
-        <div class="stat-card highlight">
-          <div class="stat-card-label">% Tiebreaks ganados</div>
-          <div class="stat-card-value" style="color:var(--accent2)">${Math.round((p.tb_win||0.62)*100)}%</div>
-          <div class="stat-card-sub">Presión máxima</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-card-label">% Set decisivo</div>
-          <div class="stat-card-value">${Math.round((p.dec_win||0.64)*100)}%</div>
-          <div class="stat-card-sub">Cuando se juega todo</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-card-label">% Pts ganados en red</div>
-          <div class="stat-card-value">${Math.round((p.net_win||0.65)*100)}%</div>
-          <div class="stat-card-sub">Efectividad en la volea</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-card-label">Altura</div>
-          <div class="stat-card-value">${p.height||'—'}<span style="font-size:1rem;color:var(--muted)">cm</span></div>
-          <div class="stat-card-sub">Ventaja en saque y reach</div>
-        </div>
-      </div>
-
-      <div class="surface-section">
-        <div class="surface-title">Modificadores por superficie (1.00 = base, >1.00 = ventaja)</div>
-        <div class="surface-row">
-          <div class="surface-label">🔵 Dura</div>
-          <div class="surface-bar-track"><div class="surface-bar-fill hard" style="width:${surfaceToBar(s.surface.hard)}%"></div></div>
-          <div class="surface-val ${surfaceClass(s.surface.hard)}">${surfaceLabel(s.surface.hard)}</div>
-        </div>
-        <div class="surface-row">
-          <div class="surface-label">🟠 Tierra</div>
-          <div class="surface-bar-track"><div class="surface-bar-fill clay" style="width:${surfaceToBar(s.surface.clay)}%"></div></div>
-          <div class="surface-val ${surfaceClass(s.surface.clay)}">${surfaceLabel(s.surface.clay)}</div>
-        </div>
-        <div class="surface-row">
-          <div class="surface-label">🟢 Hierba</div>
-          <div class="surface-bar-track"><div class="surface-bar-fill grass" style="width:${surfaceToBar(s.surface.grass)}%"></div></div>
-          <div class="surface-val ${surfaceClass(s.surface.grass)}">${surfaceLabel(s.surface.grass)}</div>
-        </div>
-      </div>
-
-      <div class="surface-section" style="margin-bottom:2rem">
-        <div class="surface-title">Distribución de puntos por duración del rally
-          <span id="data-badge-${p.id}" class="data-badge ${p.stats.data_type === 'real' ? 'badge-real' : 'badge-est'}">
-            ${p.stats.data_type === 'real' ? '✓ Dato real (ATP/Hawk-Eye)' : '~ Estimado (análisis histórico)'}
-          </span>
-        </div>
-        <div class="rally-distribution">
-          <div class="rally-bar-row">
-            <div class="rally-bar-label">⚡ 0–4 golpes</div>
-            <div class="rally-bar-outer">
-              <div class="rally-bar-fill rally-short" style="width:${p.stats.rally_short||40}%">
-                <span class="rally-pct">${p.stats.rally_short||40}%</span>
-              </div>
-            </div>
-            <div class="rally-desc">Puntos rápidos (aces, winners directos, errores inmediatos)</div>
-          </div>
-          <div class="rally-bar-row">
-            <div class="rally-bar-label">🔄 5–8 golpes</div>
-            <div class="rally-bar-outer">
-              <div class="rally-bar-fill rally-mid" style="width:${p.stats.rally_mid||34}%">
-                <span class="rally-pct">${p.stats.rally_mid||34}%</span>
-              </div>
-            </div>
-            <div class="rally-desc">Intercambios medios (construcción del punto)</div>
-          </div>
-          <div class="rally-bar-row">
-            <div class="rally-bar-label">💪 9+ golpes</div>
-            <div class="rally-bar-outer">
-              <div class="rally-bar-fill rally-long" style="width:${p.stats.rally_long||26}%">
-                <span class="rally-pct">${p.stats.rally_long||26}%</span>
-              </div>
-            </div>
-            <div class="rally-desc">Rallies extendidos (resistencia, defensa, físico)</div>
-          </div>
-        </div>
-
-      </div>
-
-      <div class="stat-table">
-        <div class="stat-table-header"><div>Estadística</div><div>Valor</div><div>Percentil</div></div>
-        ${[
-          ['🎯 Velocidad de saque', (s.serve_kmh||'—')+' km/h', barW(s.serve_kmh||200,170,250)],
-          ['👊 Velocidad de derecha', (s.fh_kmh||'—')+' km/h', barW(s.fh_kmh||145,118,178)],
-          ['🔄 Velocidad de revés', (s.bh_kmh||'—')+' km/h', barW(s.bh_kmh||138,115,162)],
-          ['Potencia de servicio (1er srv %)', Math.round(s.serve1pct*100)+'%', barW(s.serve1pct,0.56,0.70)],
-          ['Eficacia 1er servicio (pts ganados)', Math.round(s.win1st*100)+'%', barW(s.win1st,0.68,0.86)],
-          ['Eficacia 2do servicio', Math.round(s.win2nd*100)+'%', barW(s.win2nd,0.50,0.62)],
-          ['Presión desde la devolución', Math.round(s.returnWin*100)+'%', barW(s.returnWin,0.28,0.52)],
-          ['Agresividad (winners)', s.winners+' por partido', barW(s.winners,24,52)],
-          ['Control (errores no forzados)', s.errors+' por partido', 100-barW(s.errors,18,38)],
-          ['Conversión de breaks', Math.round(s.breakConvert*100)+'%', barW(s.breakConvert,0.32,0.54)],
-          ['Solidez (breaks salvados)', Math.round(s.breakSave*100)+'%', barW(s.breakSave,0.60,0.74)],
-          ['🎯 Tiebreaks ganados', Math.round((p.tb_win||0.62)*100)+'%', barW(p.tb_win||0.62,0.52,0.76)],
-          ['💪 Sets decisivos ganados', Math.round((p.dec_win||0.64)*100)+'%', barW(p.dec_win||0.64,0.54,0.76)],
-          ['🥅 Puntos en red ganados', Math.round((p.net_win||0.65)*100)+'%', barW(p.net_win||0.65,0.50,0.84)],
-        ].map(([label, val, pct]) => `
-          <div class="stat-table-row">
-            <div class="str-label">${label}</div>
-            <div class="str-value">${val}</div>
-            <div class="str-bar"><div class="str-bar-fill" style="width:${Math.min(100,Math.max(0,pct))}%"></div></div>
-          </div>
-        `).join('')}
-      </div>
-    </div>
-  `;
-}
-
-// ===== INIT =====
-renderGrid('grid-p1','p1');
-renderGrid('grid-p2','p2');
 </script>
 </body>
 </html>
